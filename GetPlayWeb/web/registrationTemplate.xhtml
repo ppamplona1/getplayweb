@@ -5,14 +5,26 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html">
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <title><ui:insert name="title">Default Title</ui:insert></title>
-<h:outputStylesheet name="css/jsfcrud.css"/>
+        <title><ui:insert name="title"></ui:insert></title>
+        <h:outputStylesheet name="css/stylesheet.css"/>
     </h:head>
 
     <h:body>
-        <div id="center" class="subContainer greyBox">
-            <ui:insert name="box">Box Content Here</ui:insert>
+        <div id="mainContainer">
+        
+        
+            <form align="center">
+                <h1> GetPlayWEB </h1>
+            </form>
+        
+            
+            <div  align="center" class="subContainer">
+            <ui:insert name="box"></ui:insert>
         </div>
+        
+            
+        </div>    
+            
     </h:body>
 
 </html>

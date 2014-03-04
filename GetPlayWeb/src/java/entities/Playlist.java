@@ -8,6 +8,7 @@ package entities;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -46,7 +47,7 @@ public class Playlist implements Serializable {
     
     @ManyToMany
     @JoinColumn(name ="SONG_ID", nullable = false)
-    private Music song;
+    private List<Music> songs;
 
     public Long getPlaylistID() {
         return playlistID;

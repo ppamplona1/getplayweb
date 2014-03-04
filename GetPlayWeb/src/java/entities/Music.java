@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class Music implements Serializable {
     private static final long serialVersionUID = 1L;
-    
+      
     @Id
     @NotNull
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -50,12 +50,16 @@ public class Music implements Serializable {
     @NotNull
     private int releaseYEAR;
     
-    @Column(name = "RELEASEYEAR")
+    @Column(name = "PATH")
     @NotNull
     private String path;
 
-       
-
+    
+    @ManyToOne
+    @JoinColumn(name = "USER_ID", nullable = false)
+    private User user;
+    
+    
     public Long getSongID() {
         return songID;
     }

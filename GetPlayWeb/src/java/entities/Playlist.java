@@ -7,6 +7,7 @@
 package entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
@@ -47,7 +48,7 @@ public class Playlist implements Serializable {
     
     @ManyToMany
     @JoinColumn(name ="SONG_ID", nullable = false)
-    private List<Music> songs;
+    private ArrayList<Music> songs;
 
     public Long getPlaylistID() {
         return playlistID;
@@ -81,11 +82,11 @@ public class Playlist implements Serializable {
         this.user = user;
     }
 
-    public List<Music> getSongs() {
+    public ArrayList<Music> getSongs() {
         return songs;
     }
 
-    public void setSongs(List<Music> songs) {
+    public void setSongs(ArrayList<Music> songs) {
         this.songs = songs;
     }
 

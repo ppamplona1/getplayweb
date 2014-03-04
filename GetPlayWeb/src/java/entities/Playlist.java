@@ -81,13 +81,15 @@ public class Playlist implements Serializable {
         this.user = user;
     }
 
-    public Music getSong() {
-        return song;
+    public List<Music> getSongs() {
+        return songs;
     }
 
-    public void setSong(Music song) {
-        this.song = song;
+    public void setSongs(List<Music> songs) {
+        this.songs = songs;
     }
+
+    
     
     
 

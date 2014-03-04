@@ -51,9 +51,9 @@ public class Music implements Serializable {
     @NotNull
     private int releaseYEAR;
     
-    @Column(name = "PATH")
+    @Column(name = "MUSIC_PATH")
     @NotNull
-    private String path1;
+    private String path;
 
     
     @OneToOne
@@ -107,11 +107,11 @@ public class Music implements Serializable {
     }
 
     public String getPath1() {
-        return path1;
+        return path;
     }
 
     public void setPath1(String path1) {
-        this.path1 = path1;
+        this.path = path1;
     }
     
     public User getUser() {

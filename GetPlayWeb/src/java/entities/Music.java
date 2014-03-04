@@ -28,7 +28,7 @@ public class Music implements Serializable {
     @Id
     @NotNull
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(unique = true, name = "SONGID")
+    @Column(unique = true, name = "SONG_ID")
     private Long songID;
     
     @Column(name = "TITLE")
@@ -55,9 +55,15 @@ public class Music implements Serializable {
     private String path;
 
     
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "USER_ID", nullable = false)
     private User user;
+
+    
+    @ManyToMany
+    @JoinColumn(name = "PLAYLIST_ID", nullable = false)
+    private Playlist p;
+   
     
     
     public Long getSongID() {
@@ -109,6 +115,24 @@ public class Music implements Serializable {
     public void setPath(String path) {
         this.path = path;
     }
+    
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Playlist getP() {
+        return p;
+    }
+
+    public void setP(Playlist p) {
+        this.p = p;
+    }
+    
+    
 
     @Override
     public int hashCode() {

@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class Music implements Serializable {
     private static final long serialVersionUID = 1L;
-    
+      
     @Id
     @NotNull
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(unique = true, name = "SONGID")
+    @Column(unique = true, name = "SONG_ID")
     private Long songID;
     
     @Column(name = "TITLE")
@@ -50,12 +50,22 @@ public class Music implements Serializable {
     @NotNull
     private int releaseYEAR;
     
-    @Column(name = "RELEASEYEAR")
+    @Column(name = "PATH")
     @NotNull
     private String path;
 
-       
+    
+    @OneToOne
+    @JoinColumn(name = "USER_ID", nullable = false)
+    private User user;
 
+    
+    @ManyToMany
+    @JoinColumn(name = "PLAYLIST_ID", nullable = false)
+    private Playlist p;
+   
+    
+    
     public Long getSongID() {
         return songID;
     }
@@ -105,6 +115,24 @@ public class Music implements Serializable {
     public void setPath(String path) {
         this.path = path;
     }
+    
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Playlist getP() {
+        return p;
+    }
+
+    public void setP(Playlist p) {
+        this.p = p;
+    }
+    
+    
 
     @Override
     public int hashCode() {

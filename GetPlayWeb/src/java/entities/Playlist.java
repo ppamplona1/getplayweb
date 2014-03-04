@@ -8,14 +8,7 @@ package entities;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -30,7 +23,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 public class Playlist implements Serializable {
     private static final long serialVersionUID = 1L;
-    
     
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -47,14 +39,57 @@ public class Playlist implements Serializable {
     @Column(name = "CREATION_DATE")
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date creationDate;
+    
+    @OneToOne
+    @JoinColumn(name ="USER_ID", nullable = false)
+    private User user;
+    
+    @ManyToMany
+    @JoinColumn(name ="SONG_ID", nullable = false)
+    private Music song;
 
-    public Long getId() {
+    public Long getPlaylistID() {
         return playlistID;
     }
 
-    public void setId(Long id) {
-        this.playlistID = id;
+    public void setPlaylistID(Long playlistID) {
+        this.playlistID = playlistID;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Music getSong() {
+        return song;
+    }
+
+    public void setSong(Music song) {
+        this.song = song;
+    }
+    
+    
+
 
     @Override
     public int hashCode() {

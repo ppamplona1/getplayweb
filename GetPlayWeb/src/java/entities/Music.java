@@ -34,36 +34,33 @@ public class Music implements Serializable {
     
     @Column(name = "TITLE")
     @NotNull
-    @Size(max = 255)
+    @Size(max = 100)
     private String title;
     
     @Column(name = "ARTIST")
     @NotNull
-    @Size(max = 45)
+    @Size(max = 50)
     private String artist;
     
     @Column(name = "ALBUM")
     @NotNull
-    @Size(max = 45)
+    @Size(max = 50)
     private String album;
-
+    
     @Column(name = "RELEASEYEAR")
+    @Size (min = 4, max = 4)
     @NotNull
     private int releaseYEAR;
     
     @Column(name = "MUSIC_PATH")
+    @Size(max = 150)
     @NotNull
     private String path;
 
-    
     @OneToOne
     @JoinColumn(name = "USER_ID", nullable = false)
     private User user;
 
-    
-   
-    
-    
     public Long getSongID() {
         return songID;
     }

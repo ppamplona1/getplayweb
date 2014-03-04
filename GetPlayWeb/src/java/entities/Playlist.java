@@ -33,7 +33,7 @@ public class Playlist implements Serializable {
     
     @NotNull
     @Column(name = "NAME") 
-    @Size(max = 250)
+    @Size(max = 30)
     private String name;
     
     @NotNull
@@ -49,6 +49,7 @@ public class Playlist implements Serializable {
     @JoinColumn(name ="SONG_ID", nullable = false)
     private List<Music> songs;
 
+    
     public Long getPlaylistID() {
         return playlistID;
     }

@@ -7,6 +7,7 @@
 package entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -52,7 +53,7 @@ public class Music implements Serializable {
     
     @Column(name = "PATH")
     @NotNull
-    private String path;
+    private String path1;
 
     
     @OneToOne
@@ -60,9 +61,6 @@ public class Music implements Serializable {
     private User user;
 
     
-    @ManyToMany
-    @JoinColumn(name = "PLAYLIST_ID", nullable = false)
-    private Playlist p;
    
     
     
@@ -108,12 +106,12 @@ public class Music implements Serializable {
         this.releaseYEAR = releaseYEAR;
     }
 
-    public String getPath() {
-        return path;
+    public String getPath1() {
+        return path1;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setPath1(String path1) {
+        this.path1 = path1;
     }
     
     public User getUser() {
@@ -124,13 +122,7 @@ public class Music implements Serializable {
         this.user = user;
     }
 
-    public Playlist getP() {
-        return p;
-    }
 
-    public void setP(Playlist p) {
-        this.p = p;
-    }
     
     
 

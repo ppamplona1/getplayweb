@@ -5,24 +5,20 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html">
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="css/souma.css" rel="stylesheet" type="text/css" />
         <title><ui:insert name="title"></ui:insert></title>
-        <h:outputStylesheet name="css/stylesheet.css"/>
+        <h:outputStylesheet name="css/css.css"/>
     </h:head>
 
     <h:body>
-        <div id="mainContainer">
-        
-        
+        <div>
             <form align="center">
                 <h1> GetPlayWEB </h1>
             </form>
         
-            
-            <div  align="center" class="subContainer">
-            <ui:insert name="box"></ui:insert>
-        </div>
-        
-            
+            <div align="center">
+                <ui:insert name="box"></ui:insert>
+            </div>
         </div>    
             
     </h:body>

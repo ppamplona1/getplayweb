@@ -12,7 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.*;
-import javax.validation.constraints.*;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -27,37 +26,26 @@ public class Music implements Serializable {
     private static final long serialVersionUID = 1L;
       
     @Id
-    @NotNull
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(unique = true, name = "SONG_ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(unique = true, name = "SONG_ID", nullable = false)
     private Long songID;
     
-    @Column(name = "TITLE")
-    @NotNull
-    @Size(max = 100)
+    @Column(name = "TITLE", nullable = false, length = 100)
     private String title;
     
-    @Column(name = "ARTIST")
-    @NotNull
-    @Size(max = 50)
+    @Column(name = "ARTIST", nullable = false, length = 50)
     private String artist;
     
-    @Column(name = "ALBUM")
-    @NotNull
-    @Size(max = 50)
+    @Column(name = "ALBUM", nullable = false, length = 50)
     private String album;
     
-    @Column(name = "RELEASEYEAR")
-    @Size (min = 4, max = 4)
-    @NotNull
+    @Column(name = "RELEASEYEAR", nullable = false, length = 4)
     private int releaseYEAR;
     
-    @Column(name = "MUSIC_PATH")
-    @Size(max = 150)
-    @NotNull
+    @Column(name = "MUSIC_PATH", nullable = false, length = 150)
     private String path;
 
-    @OneToOne
+    @OneToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "USER_ID", nullable = false)
     private User user;
 

@@ -10,8 +10,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -26,26 +24,22 @@ public class Playlist implements Serializable {
     private static final long serialVersionUID = 1L;
     
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @NotNull
-    @Column(unique = true,name = "PLAYLIST_ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(unique = true, name = "PLAYLIST_ID", nullable = false)
     private Long playlistID;
     
-    @NotNull
-    @Column(name = "NAME") 
-    @Size(max = 30)
+    @Column(name = "NAME", nullable = false, length = 30)
     private String name;
     
-    @NotNull
-    @Column(name = "CREATION_DATE")
-    @Temporal(javax.persistence.TemporalType.DATE)
+    @Column(name = "CREATION_DATE", nullable = false, updatable = false)
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date creationDate;
     
     @OneToOne
     @JoinColumn(name ="USER_ID", nullable = false)
     private User user;
     
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinColumn(name ="SONG_ID", nullable = false)
     private List<Music> songs;
 

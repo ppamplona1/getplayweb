@@ -1,12 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" 
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:h="http://xmlns.jcp.org/jsf/html">
-    <head>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
         <link href="css/souma.css" rel="stylesheet" type="text/css" />
-    </head>
+    </h:head>
     
-    <body>
+    <h:body>
         <ui:composition template="./registrationTemplate.xhtml">
             
             <ui:define name="title">
@@ -15,22 +15,16 @@
             <ui:define name="box">
                 
                 <h:form>
-                    <br />
-                    <label> E-Mail       
-                        <input type="text" name="e-mail" id="e-mail" />
-                        <br />
-                    </label>
-                    <br />
-                    <label> Password
-                        <input type="text" name="Psw" id="Psw" />
-                    </label> 
-                    <br />
-                    <br />
-                    
+                    <br/>
+                    <h:outputLabel value ="E-Mail"></h:outputLabel>
+                    <h:inputText value ="#{userManagedBean.userEmail}"/>
+                    <br /><br />
+                    <h:outputLabel value ="Password"></h:outputLabel>
+                    <h:inputText value ="#{userManagedBean.userPassword}"/>
+                    <br /><br />
                     <h:commandLink action="newUser"> New user?</h:commandLink> 
-                    <br />
-                    <br />
-                    <h:commandButton class="button" value="Submit"/>
+                    <br /><br />
+                    <h:commandButton class="button" value="Submit" action="#{userManagedBean.loginUser()}"/>
                 </h:form>
                 
             </ui:define> 
@@ -38,6 +32,6 @@
         </ui:composition>
         
         
-    </body>
+    </h:body>
 </html>
 

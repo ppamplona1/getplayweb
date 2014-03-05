@@ -16,7 +16,21 @@
              <ui:define name="box">
                 
                 <h:form>
-                    <h:commandButton class = "button" value="Submit"/>
+                    <h:outputLabel value="Name"/>
+                    <h:inputText value ="#{userManagedBean.newUserName}"/>
+                    <br /><br />
+                    <h:outputLabel value ="E-Mail"></h:outputLabel>
+                    <h:inputText value ="#{userManagedBean.newUserEmail}"/>
+                    <br /><br />
+                    <h:outputLabel value ="Password"></h:outputLabel>
+                    <h:inputText value ="#{userManagedBean.newUserPassword1}"/>
+                    <br /><br />
+                    <h:outputLabel value ="Confirm Password"></h:outputLabel>
+                    <h:inputText value ="#{userManagedBean.newUserPassword2}"/>
+                    <br /><br />
+                    <h:commandButton value="Back" action="Registration"/>
+                    <h:commandButton value="Submit"/>
+                    
                 </h:form>
                 
             </ui:define> 

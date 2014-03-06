@@ -21,17 +21,14 @@ import javax.persistence.PersistenceContext;
 @SessionScoped
 public class UserManagedBean implements Serializable {
     
-    @PersistenceContext(unitName = "GetPlayWebPU")
-    private EntityManager em;
-
     private UserFacade userFacade;
     
     private String newUserName;
     private String newUserEmail;
     private String newUserPassword1;
     private String newUserPassword2;
-    private String userEmail;
-    private String userPassword;
+    private String loginEmail;
+    private String loginPassword;
     
     
     public UserManagedBean() {
@@ -69,21 +66,23 @@ public class UserManagedBean implements Serializable {
         this.newUserPassword2 = newUserPassword2;
     }
 
-    public String getUserEmail() {
-        return userEmail;
+    public String getLoginEmail() {
+        return loginEmail;
     }
 
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
+    public void setLoginEmail(String loginEmail) {
+        this.loginEmail = loginEmail;
     }
 
-    public String getUserPassword() {
-        return userPassword;
+    public String getLoginPassword() {
+        return loginPassword;
     }
 
-    public void setUserPassword(String userPassword) {
-        this.userPassword = userPassword;
+    public void setLoginPassword(String loginPassword) {
+        this.loginPassword = loginPassword;
     }
+
+    
 
     
     

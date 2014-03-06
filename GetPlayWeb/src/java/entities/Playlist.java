@@ -3,14 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package entities;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 
 /**
  *
@@ -18,32 +19,44 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @Table(name = "PLAYLISTS")
-@XmlRootElement
-
+@NamedQueries({
+    @NamedQuery(name = "Playlist.findByAll", query = "SELECT p FROM Playlist p"),
+    @NamedQuery(name = "Playlist.findByPlaylistID", query = "SELECT p FROM Playlist p WHERE p.playlistID = :playlistID"),
+    @NamedQuery(name = "Playlist.findByPlaylistName", query = "SELECT p FROM Playlist p WHERE p.name = :name"),
+    @NamedQuery(name = "Playlist.findByCreationDate", query = "SELECT p FROM Playlist p WHERE p.creationDate = :creationDate"),
+})
 public class Playlist implements Serializable {
+
     private static final long serialVersionUID = 1L;
-    
+
     @Id
+    @Basic(optional = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(unique = true, name = "PLAYLIST_ID", nullable = false)
+    @NotNull
+    @Column(name = "PLAYLIST_ID")
     private Long playlistID;
-    
+
+    @NotNull
+    @Basic(optional = false)
+    @Size(max = 50, message = "The title must have less than 50 characters")
     @Column(name = "NAME", nullable = false, length = 30)
     private String name;
-    
+
+    @NotNull
+    @Basic(optional = false)
     @Column(name = "CREATION_DATE", nullable = false, updatable = false)
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date creationDate;
-    
-    @OneToOne
-    @JoinColumn(name ="USER_ID", nullable = false)
-    private User user;
-    
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name ="SONG_ID", nullable = false)
+
+    @JoinColumn(name = "USERPLAY_USER_ID", referencedColumnName = "USER_ID")
+    @ManyToOne
+    private UserPlay userplay;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "BELONGS", joinColumns = @JoinColumn(name = "PLAYLIST_ID"),
+            inverseJoinColumns = @JoinColumn(name = "SONG_ID"))
     private List<Music> songs;
 
-    
     public Long getPlaylistID() {
         return playlistID;
     }
@@ -68,12 +81,12 @@ public class Playlist implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public User getUser() {
-        return user;
+    public UserPlay getUser() {
+        return userplay;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(UserPlay user) {
+        this.userplay = user;
     }
 
     public List<Music> getSongs() {
@@ -83,11 +96,6 @@ public class Playlist implements Serializable {
     public void setSongs(List<Music> songs) {
         this.songs = songs;
     }
-
-    
-    
-    
-
 
     @Override
     public int hashCode() {
@@ -113,5 +121,5 @@ public class Playlist implements Serializable {
     public String toString() {
         return "entities.Playlist[ id=" + playlistID + " ]";
     }
-    
+
 }

@@ -3,51 +3,85 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package entities;
 
 import java.io.Serializable;
+import java.util.GregorianCalendar;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.*;
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author User
+ * @author UserPlay
  */
-
 @Entity
 @Table(name = "MUSIC")
-@XmlRootElement
+@NamedQueries({
+    @NamedQuery(name = "Music.findAll", query = "SELECT m FROM Music m"),
+    @NamedQuery(name = "Music.findBySONG_Id", query = "SELECT m FROM Music m WHERE m.songID = :SONG_ID"),
+    @NamedQuery(name = "Music.findByTitle", query = "SELECT m FROM Music m WHERE m.title = :title"),
+    @NamedQuery(name = "Music.findByArtist", query = "SELECT m FROM Music m WHERE m.artist = :artist"),
+    @NamedQuery(name = "Music.findByAlbum", query = "SELECT m FROM Music m WHERE m.album = :album"),
+    @NamedQuery(name = "Music.findByReleaseYear", query = "SELECT m FROM Music m WHERE m.releaseYEAR = :releaseYEAR"),
+    @NamedQuery(name = "Music.findByPath", query = "SELECT m FROM Music m WHERE m.releaseYEAR = :releaseYEAR")    
+    })
 public class Music implements Serializable {
-    private static final long serialVersionUID = 1L;
-      
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(unique = true, name = "SONG_ID", nullable = false)
-    private Long songID;
+
     
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "SONG_ID")
+    @Basic(optional = false)
+    private Long songID;
+
+    @Basic(optional = false)
+    @NotNull
+    @Size(max = 100, message = "The title must have less than 100 characters")
     @Column(name = "TITLE", nullable = false, length = 100)
     private String title;
-    
+
+    @NotNull
+    @Size(max = 50, message = "The title must have less than 50 characters")
     @Column(name = "ARTIST", nullable = false, length = 50)
     private String artist;
-    
+
+    @NotNull
+    @Size(min = 1, max = 50, message = "The title must have less than 50 characters")
     @Column(name = "ALBUM", nullable = false, length = 50)
     private String album;
-    
-    @Column(name = "RELEASEYEAR", nullable = false, length = 4)
-    private int releaseYEAR;
-    
-    @Column(name = "MUSIC_PATH", nullable = false, length = 150)
-    private String path;
 
-    @OneToOne (fetch = FetchType.EAGER)
-    @JoinColumn(name = "USER_ID", nullable = false)
-    private User user;
+   
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "RELEASE_YEAR", nullable = false)
+    @Min(1900)
+    @Digits(integer=4, fraction=0)
+    private int releaseYEAR;
+
+    @Basic(optional = false)
+    @NotNull
+    @Size(max = 200, message = "The title must have less than 200 characters and more than 4 characters")
+    @Column(name = "MUSIC_PATH", nullable = false, length = 200, updatable = false)
+    private String path1;
+
+
+    @JoinColumn(name = "USER_ID")
+    @ManyToOne
+    private UserPlay userplay;
+
+ 
 
     public Long getSongID() {
         return songID;
@@ -72,8 +106,7 @@ public class Music implements Serializable {
     public void setArtist(String artist) {
         this.artist = artist;
     }
-    
-   
+
     public String getAlbum() {
         return album;
     }
@@ -81,7 +114,6 @@ public class Music implements Serializable {
     public void setAlbum(String album) {
         this.album = album;
     }
-
 
     public int getReleaseYEAR() {
         return releaseYEAR;
@@ -92,24 +124,20 @@ public class Music implements Serializable {
     }
 
     public String getPath1() {
-        return path;
+        return path1;
     }
 
     public void setPath1(String path1) {
-        this.path = path1;
-    }
-    
-    public User getUser() {
-        return user;
+        this.path1 = path1;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public UserPlay getUser() {
+        return userplay;
     }
 
-
-    
-    
+    public void setUser(UserPlay user) {
+        this.userplay = user;
+    }
 
     @Override
     public int hashCode() {
@@ -135,5 +163,5 @@ public class Music implements Serializable {
     public String toString() {
         return "entities.Music[ id=" + songID + " ]";
     }
-    
+
 }

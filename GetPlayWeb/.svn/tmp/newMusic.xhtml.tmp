@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+        <ui:insert name="metadata"/>
+        <f:event type="preRenderView" listener="#{userController.verifyUser()}" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet name="./css/default.css"/>
+        <h:outputStylesheet name="./css/cssLayout.css"/>
+    </h:head>
+    <h:body>
+
+        <ui:composition template="./mainTemplate.xhtml">
+
+            <ui:define name ="content">
+
+                
+                <h:form enctype="multipart/form-data">
+                    <h1>New Music</h1> 
+                    <br />
+                    <table border="0" cellspacing="10">
+                        <thead>
+                           
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <h:outputLabel value="Title"/>
+                                </td>
+                                <td>
+                                    <h:inputText id="title" value="#{musicController.music.title}"/>
+                                </td>
+                                <td>
+                                    <h:message for="title" style="color: red"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h:outputLabel value="Artist"/>
+                                </td>
+                                <td>
+                                    <h:inputText id="artist" value="#{musicController.music.artist}"/>
+                                </td>
+                                <td>
+                                    <h:message for="artist" style="color: red"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h:outputLabel value="Album"/>
+                                </td>
+                                <td>
+                                    <h:inputText id="album" value="#{musicController.music.album}"/>
+                                </td>
+                                <td>
+                                    <h:message for="album" style="color: red"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h:outputLabel value="Release Year"/>
+                                </td>
+                                <td>
+                                    <h:inputText id="releaseYEAR" value="#{musicController.year}" />
+                                </td>
+                                <td>
+                                    <h:message for="releaseYEAR" style="color: red"/>
+                                    <h:outputLabel style="color: red" value="#{musicController.yearInvalid}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h:outputLabel value="Ficheiro"/>
+                                </td>
+                                <td>
+                                    <h:inputFile id="file" value="#{musicController.file}"/>
+                                </td>
+                                <td>
+                                    <h:outputLabel value="#{musicController.isMP3ErrorMessage}" style="color: red"/>
+                                    <h:message for="file" style="color: red"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h:commandButton value="Cancel" action="myMusics"/>
+                                </td>
+                                <td>
+                                    <h:commandButton value="Upload" action="#{musicController.newMusic}"/>
+                                </td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                 </h:form>
+
+            </ui:define>
+
+
+
+        </ui:composition>
+
+
+    </h:body>
+</html>
+

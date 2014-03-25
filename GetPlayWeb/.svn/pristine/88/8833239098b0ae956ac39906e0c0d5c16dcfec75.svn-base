@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <ui:insert name="metadata"/>
+        <f:event type="preRenderView" listener="#{userManagedBean.verifyUser()}" />
+    </h:head>
+    <h:body>
+
+        <ui:composition template="./mainTemplate.xhtml">
+
+            <ui:define name ="content">
+
+                <h:form>
+                    <h1>Profile</h1> 
+                    <br />
+                    
+                    <table border="0" cellspacing="10">
+                        <thead>
+                            
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <h:outputLabel value="Name"/>
+                                </td>
+                                <td>
+                                    <h:inputText id="name" value ="#{userManagedBean.user.name}"/>
+                                </td>
+                                <td>
+                                    <h:message for="name" style="color: red"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h:outputLabel value ="E-mail"></h:outputLabel>
+                                </td>
+                                <td>
+                                    <h:inputText id="eMail"  value="#{userManagedBean.user.eMail}"/>
+                                </td>
+                                <td>
+                                    <h:message for="eMail" style="color: red"/> 
+                                    <h:outputLabel value="#{userManagedBean.emailExists}" style="color: red"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h:outputLabel value ="Password"></h:outputLabel>
+                                </td>
+                                <td>
+                                    <h:inputSecret id="password" value ="#{userManagedBean.password1}"/>
+                                </td>
+                                <td>
+                                    <h:message for="password" style="color: red"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h:outputLabel value ="Confirm Password"></h:outputLabel>
+                                </td>
+                                <td>
+                                    <h:inputSecret value ="#{userManagedBean.password2}"/>
+                                </td>
+                                <td>
+                                    <h:outputLabel value="#{userManagedBean.passwordMatch}" style="color: red"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                   <h:commandButton value="Edit" action="#{userManagedBean.makeUpdateUser}"/> 
+                                </td>
+                                <td>
+                                    <h:commandButton value="Delete Account" action="#{userManagedBean.makeDeleteUser}"/>
+                                </td>
+                                <td>
+                                    
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                 </h:form>
+
+            </ui:define>
+
+
+
+        </ui:composition>
+
+        
+    </h:body>
+</html>
+

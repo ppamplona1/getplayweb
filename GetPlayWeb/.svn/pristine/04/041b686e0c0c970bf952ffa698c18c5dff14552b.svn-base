@@ -1,0 +1,100 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package pt.uc.dei.aor.projeto3.grupod.ejb;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.faces.bean.ManagedProperty;
+import pt.uc.dei.aor.projeto3.grupod.entities.UserPlay;
+import pt.uc.dei.aor.projeto3.grupod.exceptions.DuplicateEmail;
+import pt.uc.dei.aor.projeto3.grupod.facades.UserPlayFacade;
+import pt.uc.dei.aor.projeto3.grupod.managedBeans.LogedUserManagedBean;
+import pt.uc.dei.aor.projeto3.grupod.outros.EncriptarMD5;
+
+/**
+ *
+ * @author brunocosta
+ */
+@Stateless
+public class EditUserBean {
+
+    @EJB
+    private UserPlayFacade userFacade;
+
+    @ManagedProperty(value = "#{logedUserManagedBean}")
+    private LogedUserManagedBean logedUserMB;
+    
+    private String emailExists = "";
+    private String passwordMatch = "";
+
+    public String getEmailExists() {
+        return emailExists;
+    }
+
+    public void setEmailExists(String emailExists) {
+        this.emailExists = emailExists;
+    }
+
+    public String getPasswordMatch() {
+        return passwordMatch;
+    }
+
+    public void setPasswordMatch(String passwordMatch) {
+        this.passwordMatch = passwordMatch;
+    }
+    
+    
+    
+    
+    
+    public UserPlay updateUser(UserPlay logedUser, UserPlay user, 
+            String password1, String password2) {
+        
+        if(!password1.isEmpty() && password1.equals(password2)){
+            
+            String pass = EncriptarMD5.cryptWithMD5(password1);
+            user.setPassword(pass);
+            
+            
+            
+            try{
+                userFacade.checkMailUpdate(user);
+                userFacade.edit(user);
+                
+                return user;
+            }
+            catch(DuplicateEmail e){
+
+                this.emailExists = e.getMessage();
+                return null;
+            }
+        }
+        else if(password1.isEmpty() && password2.isEmpty()){
+            
+            try{
+                userFacade.checkMailUpdate(user);
+                userFacade.edit(user);
+                return user;
+            }
+            catch(DuplicateEmail e){
+
+                this.emailExists = e.getMessage();
+                return null;
+            }
+        }
+        
+        else{
+           this.passwordMatch = "The passwords doesn't match";
+           return null;
+        }
+    }
+    
+    
+    public void deleteUser(UserPlay user){
+        userFacade.remove(user);
+    }
+}

@@ -1,0 +1,195 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package managedBeans;
+
+import beans.MusicFacade;
+import entities.Music;
+import entities.UserPlay;
+import java.io.File;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.ejb.EJB;
+import javax.ejb.EJBException;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.SessionScoped;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.validator.ValidatorException;
+import javax.mail.MessagingException;
+import javax.mail.Part;
+import javax.swing.JFileChooser;
+
+/**
+ *
+ * @author brunocosta
+ */
+@ManagedBean(name = "CreateMusicManagedBean")
+@SessionScoped
+public class CreateMusicManagedBean implements Serializable {
+
+    private static final long serialVersionUID = -5288336572529686555L;
+
+    @EJB
+    private MusicFacade musicFacade;
+
+    @ManagedProperty(value = "#{loginManagedBean}")
+    private LoginManagedBean lmb;
+
+    private String title;
+
+    private String artist;
+
+    private String album;
+
+    private int releaseYEAR;
+
+    private Part f1;
+
+    private String path;
+
+    /**
+     * Creates a new instance of MusicManagedBean
+     */
+    public CreateMusicManagedBean() {
+        path = "";
+    }
+
+    public Part getF1() {
+        return f1;
+    }
+
+    public void setF1(Part f1) {
+        this.f1 = f1;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public MusicFacade getMusicFacade() {
+        return musicFacade;
+    }
+
+    public void setMusicFacade(MusicFacade musicFacade) {
+        this.musicFacade = musicFacade;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getArtist() {
+        return artist;
+    }
+
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
+
+    public String getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(String album) {
+        this.album = album;
+    }
+
+    public int getReleaseYEAR() {
+        return releaseYEAR;
+    }
+
+    public void setReleaseYEAR(int releaseYEAR) {
+        this.releaseYEAR = releaseYEAR;
+    }
+
+    public LoginManagedBean getLmb() {
+        return lmb;
+    }
+
+    public void setLmb(LoginManagedBean lmb) {
+        this.lmb = lmb;
+    }
+
+    public void gravaPath() throws MessagingException {
+        if (f1 != null) {
+
+            File f = (File) f1;
+
+            this.path = f.getAbsolutePath();
+        }
+
+    }
+
+    
+
+    public String newMusic() throws MessagingException {
+        Music m = new Music();
+        try {
+            m.setTitle(title);
+        } catch (Exception e) {
+            System.out.println("Entrou1");
+        }
+        try {
+            m.setArtist(artist);
+        } catch (Exception e) {
+            System.out.println("Art");
+        }
+
+        try {
+            m.setAlbum(album);
+        } catch (Exception e) {
+            System.out.println("Entrou2");
+        }
+        try {
+            m.setReleaseYEAR(releaseYEAR);
+        } catch (Exception e) {
+            System.out.println("Entrou3");
+        }
+
+        this.gravaPath();
+        try {
+
+            m.setPath(path);
+        } catch (Exception e) {
+            System.out.println("Entrou4");
+        }
+        try {
+            m.setUser(lmb.getLogedUser());
+        } catch (Exception e) {
+            System.out.println("Entrou5");
+        }
+
+        try{
+           musicFacade.create(m);
+           title="";
+           artist="";
+           album="";
+           path="";
+           releaseYEAR=0;
+        }catch(Exception e){
+            System.out.println("Entrou6");
+        }
+        
+
+        return "mainWindow";
+    }
+    
+    
+    
+    
+
+}

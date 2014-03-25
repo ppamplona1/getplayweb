@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        Hello from Facelets
+        <h:form enctype="multipart/form-data">
+            <h:outputLabel value="Titulo"></h:outputLabel>
+            <h:inputText id="title" value="#{CreateMusicManagedBean.song.title}"></h:inputText>
+            <br />
+            <h:outputLabel value="Artista"></h:outputLabel>
+            <h:inputText id="artist" value="#{CreateMusicManagedBean.song.artist}"></h:inputText>
+            <br />
+            <h:outputLabel value="Album"></h:outputLabel>
+            <h:inputText id="album" value="#{CreateMusicManagedBean.song.album}"></h:inputText>
+            <br />
+            <h:outputLabel value="Release Year"></h:outputLabel>
+            <h:inputText id="releaseYEAR" value="#{CreateMusicManagedBean.song.releaseYEAR}"></h:inputText>
+            <br />
+            <h:outputLabel value="Ficheiro"></h:outputLabel>
+            <h:inputFile id="file" value="#{CreateMusicManagedBean.file}" 
+                         validator="#{CreateMusicManagedBean.validateFile}"/>
+            <h:commandButton value="Upload"
+                             action="#{CreateMusicManagedBean.newMusic()}">
+                <f:ajax execute="file" render="@all"/>
+            </h:commandButton>
+            <br />
+        </h:form>
+    </h:body>
+</html>
+

@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    
+    <h:head>
+        <link href="css/souma.css" rel="stylesheet" type="text/css" />
+    </h:head>
+    <h:body>
+        <ui:composition template="./registrationTemplate.xhtml">
+        
+            <ui:define name="title">
+                GetPlay - New User 
+            </ui:define>
+            
+             <ui:define name="box">
+                
+                <h:form>
+                    
+                    <h:outputLabel value="Name"/>
+                    <h:inputText id="name" value ="#{userManagedBean.user.name}"/>
+                    <h:message for="name" style="color: red"/>
+                    <br /><br />
+                    <h:outputLabel value ="E-Mail"/>
+                    <h:inputText id="eMail"  value="#{userManagedBean.user.eMail}"/>
+                    <h:message for="eMail" style="color: red"/> 
+                    <h:outputLabel value="#{userManagedBean.emailExists}" style="color: red"/>
+                    <br /><br />
+                    <h:outputLabel value ="Password"/>
+                    <h:inputSecret id="password" value ="#{userManagedBean.user.password}"/>
+                    <h:message for="password" style="color: red"/>
+                    <br /><br />
+                    <h:outputLabel value ="Confirm Password"/>
+                    <h:inputSecret value ="#{userManagedBean.password2}"/>
+                    <h:outputLabel value="#{userManagedBean.passwordMatch}" style="color: red"/>
+                    <br /><br />
+                    <h:commandButton immediate="true" value="Back" action="login"/>
+                    <h:commandButton value="Submit" action="#{userManagedBean.makeNewUser}"/>
+                    
+                </h:form>
+                 
+            </ui:define> 
+            
+        </ui:composition>
+        
+    </h:body>
+</html>
+

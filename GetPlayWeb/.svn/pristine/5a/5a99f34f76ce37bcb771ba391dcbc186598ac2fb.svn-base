@@ -1,0 +1,230 @@
+
+
+package pt.uc.dei.aor.projeto3.grupod.ejb;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.faces.application.ConfigurableNavigationHandler;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
+import pt.uc.dei.aor.projeto3.grupod.entities.UserPlay;
+import pt.uc.dei.aor.projeto3.grupod.exceptions.DuplicateEmail;
+import pt.uc.dei.aor.projeto3.grupod.facades.UserPlayFacade;
+
+@Stateless
+public class UserEJB {
+    
+    @EJB
+    private UserPlayFacade userFacade;
+    
+    @Inject
+    private LogedUserEJB logedUserEJB;
+    
+    private String userExists;
+    private String passwordCorrect;
+    private String passMissmatch;
+    private String emailUnavailable;
+    private String emailExists;
+
+    public UserPlayFacade getUserFacade() {
+        return userFacade;
+    }
+
+    public void setUserFacade(UserPlayFacade userFacade) {
+        this.userFacade = userFacade;
+    }
+
+    public LogedUserEJB getLogedUserEJB() {
+        return logedUserEJB;
+    }
+
+    public void setLogedUserEJB(LogedUserEJB logedUserEJB) {
+        this.logedUserEJB = logedUserEJB;
+    }
+
+    public String getUserExists() {
+        return userExists;
+    }
+
+    public void setUserExists(String userExists) {
+        this.userExists = userExists;
+    }
+
+    public String getPasswordCorrect() {
+        return passwordCorrect;
+    }
+
+    public void setPasswordCorrect(String passwordCorrect) {
+        this.passwordCorrect = passwordCorrect;
+    }
+
+    public String getPassMissmatch() {
+        return passMissmatch;
+    }
+
+    public void setPassMissmatch(String passMissmatch) {
+        this.passMissmatch = passMissmatch;
+    }
+
+    public String getEmailUnavailable() {
+        return emailUnavailable;
+    }
+
+    public void setEmailUnavailable(String emailUnavailable) {
+        this.emailUnavailable = emailUnavailable;
+    }
+
+    public String getEmailExists() {
+        return emailExists;
+    }
+
+    public void setEmailExists(String emailExists) {
+        this.emailExists = emailExists;
+    }
+    
+    
+    /**
+     * Checks if the user exists and if the combination between Email 
+     * and Password is correct
+     * @param loginEmail
+     * @param loginPassword
+     * @return The String that leads to a XHTML window
+     */
+    
+    public String login(String loginEmail, String loginPassword){
+        
+        UserPlay  user = userFacade.findUserByMail(loginEmail);
+        
+        String pass = EncriptMD5EJB.cryptWithMD5(loginPassword);
+        
+        if(user!= null && user.getPassword().equals(pass)){
+            
+            logedUserEJB.setUser(user);
+            return "mainWindow";
+        }
+        else{
+            if (user == null){
+                userExists = "User not found";
+            }
+            else if (!user.getPassword().equals(pass)){
+                passwordCorrect = "Password is not correct";
+            }
+            return "login";
+        }
+    }
+    
+    /**
+     * Invalidate the session
+     * @return The String that leads to a XHTML window
+     */
+
+    public String logout(){
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+        session.invalidate();
+        
+        return "login";
+    }
+    
+    /**
+     * Verifies if is a user logged and redirect to the login window if it is not
+     */
+    
+    public void isLogged() {
+        FacesContext fc = FacesContext.getCurrentInstance();
+        ConfigurableNavigationHandler nav = (ConfigurableNavigationHandler)fc.getApplication().getNavigationHandler();
+        
+        if (logedUserEJB.getUser() == null){
+            nav.performNavigation("login");
+        }
+        
+    }
+    
+    /**
+     * Creates a new user
+     * @param user
+     * @param password2
+     * @return The new user
+     */
+    
+    public UserPlay newUser(UserPlay user, String password2) {
+
+        if (user.getPassword().equals(password2)) {
+
+            String pass = EncriptMD5EJB.cryptWithMD5(password2);
+            user.setPassword(pass);
+
+            try {
+                userFacade.checkMailCreate(user);
+                userFacade.create(user);
+                return user;
+
+            } catch (DuplicateEmail e) {
+
+                emailUnavailable = e.getMessage();
+                return null;
+            }
+        }
+        else {
+            this.passMissmatch = "The passwords doesn't match";
+            return null;
+        }
+
+    }
+    
+    /**
+     * Make the changes to the user
+     * @param logedUser
+     * @param user
+     * @param password1
+     * @param password2
+     * @return The new user
+     */
+    
+    public UserPlay updateUser(UserPlay logedUser, UserPlay user, 
+            String password1, String password2) {
+        
+        if(!password1.isEmpty() && password1.equals(password2)){
+            
+            String pass = EncriptMD5EJB.cryptWithMD5(password1);
+            user.setPassword(pass);
+            
+            try{
+                userFacade.checkMailUpdate(user);
+                userFacade.edit(user);
+                
+                return user;
+            }
+            catch(DuplicateEmail e){
+
+                emailExists = e.getMessage();
+                return null;
+            }
+        }
+        else if(password1.isEmpty() && password2.isEmpty()){
+            
+            try{
+                userFacade.checkMailUpdate(user);
+                userFacade.edit(user);
+                return user;
+            }
+            catch(DuplicateEmail e){
+
+                emailExists = e.getMessage();
+                return null;
+            }
+        }
+        
+        else{
+           passMissmatch = "The passwords doesn't match";
+           return null;
+        }
+    }
+    
+    
+    public void deleteUser(UserPlay user){
+        userFacade.remove(user);
+    }
+    
+}

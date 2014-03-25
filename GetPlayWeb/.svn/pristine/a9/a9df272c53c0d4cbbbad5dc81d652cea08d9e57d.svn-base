@@ -1,0 +1,69 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package pt.uc.dei.aor.projeto3.grupod.ejb;
+
+import java.util.List;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.faces.model.ArrayDataModel;
+import javax.faces.model.DataModel;
+import pt.uc.dei.aor.projeto3.grupod.entities.Music;
+import pt.uc.dei.aor.projeto3.grupod.entities.Playlist;
+import pt.uc.dei.aor.projeto3.grupod.entities.UserPlay;
+import pt.uc.dei.aor.projeto3.grupod.facades.PlaylistFacade;
+
+/**
+ *
+ * @author User
+ */
+@Stateless
+public class PlaylistSessionBean {
+
+    // Add business logic below. (Right-click in editor and choose
+    // "Insert Code > Add Business Method")
+    @EJB
+    private PlaylistFacade pf;
+    
+    private UserPlay userLogged;
+
+    public PlaylistFacade getPf() {
+        return pf;
+    }
+
+    public void setPf(PlaylistFacade pf) {
+        this.pf = pf;
+    }
+
+    public UserPlay getUserLogged() {
+        return userLogged;
+    }
+
+    public void setUserLogged(UserPlay userLogged) {
+        this.userLogged = userLogged;
+    }
+    
+    
+    
+    public DataModel<Playlist> myPlaylistsList() {
+
+        List resultsSongs = pf.findAllPlaylistsByUserID(userLogged);
+
+        if (resultsSongs != null) {
+
+            DataModel resultados2;
+            resultados2 = new ArrayDataModel<>(resultsSongs.toArray());
+
+            DataModel<Playlist> resultadosMymusics = (DataModel<Playlist>) resultados2;
+            return resultadosMymusics;
+
+        }
+        else{
+            return null;
+        }
+
+    }
+}

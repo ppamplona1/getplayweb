@@ -1,0 +1,138 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package managedBeans;
+
+import facades.UserFacade;
+import entities.UserPlay;
+import javax.ejb.EJB;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.SessionScoped;
+import outros.EncriptarMD5;
+
+/**
+ *
+ * @author brunocosta
+ */
+@ManagedBean
+@SessionScoped
+public class ProfileManagedBean {
+
+    @EJB
+    private UserFacade userFacade;
+    
+    @ManagedProperty(value = "#{loginManagedBean}")
+    private LoginManagedBean lmb;
+    
+    private UserPlay user;
+    private String password1;
+    private String password2;
+    private String emailExists = "";
+    private String passwordMatch = "";
+    
+    public ProfileManagedBean() {
+        
+    }
+
+    public String getEmailExists() {
+        return emailExists;
+    }
+
+    public void setEmailExists(String emailExists) {
+        this.emailExists = emailExists;
+    }
+
+    public String getPasswordMatch() {
+        return passwordMatch;
+    }
+
+    public void setPasswordMatch(String passwordMatch) {
+        this.passwordMatch = passwordMatch;
+    }
+    
+    public UserPlay getUser() {
+        if(user==null){
+        this.user = lmb.getLogedUser();
+        }
+        return user;
+    }
+
+    public void setUser(UserPlay user) {
+        this.user = user;
+    }
+
+    public String getPassword1() {
+        return password1;
+    }
+
+    public void setPassword1(String password1) {
+        this.password1 = password1;
+    }
+
+    public String getPassword2() {
+        return password2;
+    }
+
+    public void setPassword2(String password2) {
+        this.password2 = password2;
+    }
+
+    public LoginManagedBean getLmb() {
+        return lmb;
+    }
+
+    public void setLmb(LoginManagedBean lmb) {
+        this.lmb = lmb;
+    }
+    
+    
+    
+    
+    
+    public String updateUser() {
+        
+        if(!password1.isEmpty() && password1.equals(password2)){
+            
+            String pass = EncriptarMD5.cryptWithMD5(password1);
+            user.setPassword(pass);
+            
+            try{
+                userFacade.edit(user);
+                lmb.setLogedUser(user);
+            
+                return "mainWindow";
+            }
+            catch(Exception e){
+
+                this.emailExists = "E-mail not available";
+                return "profile";
+            }
+        }
+        else if(password1.isEmpty() && password2.isEmpty()){
+            try{
+                userFacade.edit(user);
+                lmb.setLogedUser(user);
+            
+                return "mainWindow";
+            }
+            catch(Exception e){
+
+                this.emailExists = "E-mail not available";
+                return "profile";
+            }
+        }
+        
+        else{
+           this.passwordMatch = "The passwords doesn't match";
+           return "profile"; 
+        }
+        
+    }
+    
+    
+    
+}

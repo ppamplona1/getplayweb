@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html class="html-main" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:head>
+
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet name="./css/default.css"/>
+        <h:outputStylesheet name="./css/cssLayout.css"/>
+
+    </h:head>
+
+    <h:body>
+
+
+        <ui:insert name="top">
+            <div id="top" class="top">
+
+                <h:form>
+
+
+                    <table border="0" class="top-table">
+                        <thead>
+
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td width="40%">
+                                    <div align="left">
+                                        <h:inputText value="#{musicController.search}"/>&nbsp;
+                                        <h:commandButton image="resources/search.png" action="#{musicController.makeSearch}"/> 
+                                    </div>
+
+
+
+
+                                </td>
+
+                                <td width="20%">
+                                    <div align="center">
+                                        <h1>GetPlayWeb</h1>
+                                    </div>
+
+                                </td>
+
+                                <td width="40%">
+
+                                    <div align="right">
+                                        <h3><h:outputText value="#{userController.userName}" />
+                                        <h:commandButton class="nav-button" value="Profile" action="profile"/>
+                                        <h:commandButton class="nav-button" value="Logout" action="#{userController.makeLogout()}"/></h3>
+                                    </div>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                </h:form>
+
+
+            </div>
+        </ui:insert>
+        <div id="left">
+            <ui:insert name="left">
+                <h:form>
+
+                    <table border="0" width="100%" cellspacing="10">
+                        <thead>
+
+                        </thead>
+                        <tbody>
+                            
+                            <tr>
+                                <td>
+                                    <h:commandButton title="My Music" image="resources/myMusic.png" action="myMusics"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h:commandButton title="My Playlists" image="resources/myPlaylists.png" action="myPlaylists"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h:commandButton title="All Music" image="resources/allMusic.png" action="allMusics"/>
+                                </td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+
+
+
+                </h:form>
+            </ui:insert>
+        </div>
+        <div id="content" class="left_content" style="color: black">
+            <div align="center">
+                <ui:insert name="content">
+                    
+                    
+                    
+                     
+                    
+                </ui:insert>
+            </div>
+        </div>
+
+    </h:body>
+
+</html>

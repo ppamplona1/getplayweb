@@ -1,0 +1,155 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package pt.uc.dei.aor.projeto3.grupod.managedBeans;
+
+
+import java.io.IOException;
+import java.util.logging.Level;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.Part;
+import pt.uc.dei.aor.projeto3.grupod.ejb.LogedUserEJB;
+import pt.uc.dei.aor.projeto3.grupod.ejb.MusicEJB;
+import pt.uc.dei.aor.projeto3.grupod.entities.Music;
+import pt.uc.dei.aor.projeto3.grupod.exceptions.ReleaseYearInvalidException;
+import pt.uc.dei.aor.projeto3.grupod.exceptions.NotMp3Exception;
+
+/**
+ *
+ * @author User
+ */
+@Named
+@RequestScoped
+public class MusicController {
+
+    private Music music;
+
+    @Inject
+    private LogedUserEJB logedUserEJB;
+
+    private Part file;
+    private String isMP3ErrorMessage = "";
+    private String year;
+    private String yearInvalid = "";
+
+    @Inject
+    private MusicEJB musicEJB;
+    /**
+     * Creates a new instance of MusicController
+     */
+    public MusicController() {
+    }
+    
+    @PostConstruct
+    public void init(){
+        if(music==null){
+            music = new Music();
+        }
+    }
+
+    public Music getMusic() {
+        return music;
+    }
+
+    public void setMusic(Music music) {
+        this.music = music;
+    }
+
+    public LogedUserEJB getLogedUserEJB() {
+        return logedUserEJB;
+    }
+
+    public void setLogedUserEJB(LogedUserEJB logedUserEJB) {
+        this.logedUserEJB = logedUserEJB;
+    }
+
+    public Part getFile() {
+        return file;
+    }
+
+    public void setFile(Part file) {
+        this.file = file;
+    }
+
+    public String getIsMP3ErrorMessage() {
+        return isMP3ErrorMessage;
+    }
+
+    public void setIsMP3ErrorMessage(String isMP3ErrorMessage) {
+        this.isMP3ErrorMessage = isMP3ErrorMessage;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public String getYearInvalid() {
+        return yearInvalid;
+    }
+
+    public void setYearInvalid(String yearInvalid) {
+        this.yearInvalid = yearInvalid;
+    }
+
+    /**
+     *
+     * musicethod to validate the part file uploaded
+     *
+     * @throws NotMp3Exception
+     *
+     */
+    public void isMP3() throws NotMp3Exception {
+        if (!"audio/mpeg".equals(file.getContentType()) & !"audio/mp3".equals(file.getContentType())) {
+            Exception ex = new NotMp3Exception();
+            isMP3ErrorMessage = ex.getMessage();
+            throw new NotMp3Exception();
+        }
+
+    }
+
+    /**
+     * musicethod for validating the releaseYear of the Music music.
+     *
+     * @throws ReleaseYearInvalidException
+     * @return true if year is between 1900 and the actual year and the musicethod
+ setReleaseYear for the musicusic music is successful
+     */
+    public void verifyYear() throws ReleaseYearInvalidException {
+
+        try {
+
+            music.setReleaseYEAR(musicEJB.validateYear(year));
+
+        } catch (ReleaseYearInvalidException e) {
+            yearInvalid = e.getMessage();
+            throw new ReleaseYearInvalidException();
+
+        }
+
+    }
+
+    public String newMusic() throws IOException {
+        try {
+            verifyYear();
+            isMP3();
+            musicEJB.upload(file, music, logedUserEJB.getUser());
+            musicEJB.newMusic(music);
+            return "myMusics";
+        } catch (ReleaseYearInvalidException | NotMp3Exception ex) {
+            java.util.logging.Logger.getLogger(MusicController.class.getName()).log(Level.SEVERE, null, ex);
+            return "newMusic";
+        }
+
+
+    }
+
+}

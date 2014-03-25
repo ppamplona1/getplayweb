@@ -1,0 +1,69 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package pt.uc.dei.aor.projeto3.grupod.ejb;
+
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.faces.bean.ManagedProperty;
+import pt.uc.dei.aor.projeto3.grupod.entities.UserPlay;
+import pt.uc.dei.aor.projeto3.grupod.facades.UserPlayFacade;
+import pt.uc.dei.aor.projeto3.grupod.managedBeans.RegistrationManagedBean;
+import pt.uc.dei.aor.projeto3.grupod.outros.EncriptarMD5;
+
+/**
+ *
+ * @author brunocosta
+ */
+@Stateless
+public class NewUserBean {
+
+    @EJB
+    private UserPlayFacade userFacade;
+    
+    
+    
+    @ManagedProperty(value = "#{registrationManagedBean}")
+    private RegistrationManagedBean registrationMB;
+
+    
+
+    public RegistrationManagedBean getRegistrationMB() {
+        return registrationMB;
+    }
+
+    public void setRegistrationMB(RegistrationManagedBean registrationMB) {
+        this.registrationMB = registrationMB;
+    }
+    
+    public UserPlay newUser(UserPlay user, String password2) {
+        
+        if(user.getPassword().equals(password2)){
+            
+            String pass = EncriptarMD5.cryptWithMD5(password2);
+            user.setPassword(pass);
+            try{
+                
+                userFacade.create(user);
+                
+                
+                return user;
+                
+            }
+            catch(Exception e){
+                
+                registrationMB.setEmailExists("E-mail not available");
+                return null;
+
+            }
+        }
+        else{
+            registrationMB.setPasswordMatch("The passwords doesn't match");
+            return null;
+        }
+        
+    }
+}

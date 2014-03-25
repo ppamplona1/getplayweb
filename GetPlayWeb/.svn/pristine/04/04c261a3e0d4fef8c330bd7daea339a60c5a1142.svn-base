@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        
+        <link href="css/table-style.css" rel="stylesheet" type="text/css" />
+        <h:form>
+            <h:commandButton value="Profile" action="profile"/>
+        </h:form>
+    </h:head>
+    <h:body>
+
+        <h:form>
+             
+            <h:outputText value="#{loginManagedBean.logedUser.userID }" />
+            <h:dataTable id="table1" value="#{MusicManagerBean.allMusicsList()}" var="item"
+                         headerClass="person-table-header"
+    		rowClasses="person-table-odd-row,person-table-even-row">
+                
+                
+                <h:column>
+                    
+                    <f:facet name="header">
+                        Title
+                    </f:facet>
+                    #{item.title}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        Artista
+                    </f:facet>
+                    #{item.artist}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        Album
+                    </f:facet>
+                    #{item.album}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        Release Year
+                    </f:facet>
+                    #{item.releaseYEAR}
+                </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        Select
+                    </f:facet>
+                    <h:commandButton value="Apaga"/> 
+                </h:column>
+
+            </h:dataTable>
+            <h:commandButton value="Logout" action="#{loginManagedBean.logout}"/>
+        </h:form>
+    </h:body>
+</html>
+

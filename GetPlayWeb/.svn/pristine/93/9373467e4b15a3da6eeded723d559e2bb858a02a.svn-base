@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <ui:insert name="metadata"/>
+        <f:event type="preRenderView" listener="#{loginManagedBean.isLogged()}" />
+    </h:head>
+    <h:body>
+
+        <ui:composition template="./mainTemplate.xhtml">
+
+            <ui:define name ="content">
+
+                <h:form>
+
+                    <h:outputLabel value="Name"/>
+                    <h:inputText id="name" value ="#{profileManagedBean.user.name}"/>
+                    <h:message for="name" style="color: red"/>
+                    <br /><br />
+                    <h:outputLabel value ="E-mail"></h:outputLabel>
+                    <h:inputText id="eMail"  value="#{profileManagedBean.user.eMail}"/>
+                    <h:message for="eMail" style="color: red"/> 
+                    <h:outputLabel value="#{profileManagedBean.emailExists}" style="color: red"/>
+                    <br /><br />
+                    <h:outputLabel value ="Password"></h:outputLabel>
+                    <h:inputSecret id="password" value ="#{profileManagedBean.password1}"/>
+                    <h:message for="password" style="color: red"/>
+                    <br /><br />
+                    <h:outputLabel value ="Confirm Password"></h:outputLabel>
+                    <h:inputSecret value ="#{profileManagedBean.password2}"/>
+                    <h:outputLabel value="#{profileManagedBean.passwordMatch}" style="color: red"/>
+                    <br /><br />
+                    <h:commandButton value="Edit" action="#{profileManagedBean.updateUser}"/>
+                    <h:commandButton value="Delete Account" action="#{profileManagedBean.deleteUser}"/>
+
+                </h:form>
+
+            </ui:define>
+
+
+
+        </ui:composition>
+
+        
+    </h:body>
+</html>
+

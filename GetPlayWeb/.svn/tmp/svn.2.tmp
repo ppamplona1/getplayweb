@@ -1,0 +1,144 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package managedBeans;
+
+import facades.MusicFacade;
+import entities.Music;
+import java.io.Serializable;
+import java.util.List;
+import javax.ejb.EJB;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.SessionScoped;
+import javax.faces.component.html.HtmlDataTable;
+import javax.faces.component.html.HtmlInputHidden;
+import javax.faces.model.ArrayDataModel;
+import javax.faces.model.DataModel;
+import javax.persistence.Query;
+
+/**
+ *
+ * @author User
+ */
+@ManagedBean(name = "MusicManagerBean")
+@SessionScoped
+public class MusicManagerBean implements Serializable{
+
+    private Music music;
+    private List<Music> songs;
+    @EJB
+    private MusicFacade musicFacade;
+    @ManagedProperty(value = "#{loginManagedBean}")
+    private LoginManagedBean lmb;
+    
+    private HtmlDataTable dataTable;
+    private Music dataItem;
+    private HtmlInputHidden dataItemId = new HtmlInputHidden();
+
+
+    public MusicManagerBean() {
+        dataItem = new Music();
+        dataItemId = new HtmlInputHidden();
+    }
+    
+//    public String deleteSongs(){
+//        
+//    }
+    
+    public HtmlDataTable getDataTable() {
+        return dataTable;
+    }
+    
+    public void setDataTable(HtmlDataTable dataTable) {
+        this.dataTable = dataTable;
+    }
+
+    public void setDataItem(Music dataItem) {
+        this.dataItem = dataItem;
+    }
+
+    public void setDataItemId(HtmlInputHidden dataItemId) {
+        this.dataItemId = dataItemId;
+    }
+
+    public Music getDataItem() {
+        return dataItem;
+    }
+
+    public HtmlInputHidden getDataItemId() {
+        return dataItemId;
+    }
+
+    public String deleteSong(Music music) {
+        if (music.getUser().getUserID() == lmb.getLogedUser().getUserID()) {
+            this.musicFacade.remove(musicFacade.findMusicBySongID(music.getSongID()));
+            return "mainWindow";
+        }
+        return null;
+    }
+
+    public Music getMusic() {
+        return music;
+    }
+
+    public void setMusic(Music music) {
+        this.music = music;
+    }
+
+    public List<Music> getSongs() {
+        return songs;
+    }
+
+    public void setSongs(List<Music> songs) {
+        this.songs = songs;
+    }
+
+    public MusicFacade getMusicFacade() {
+        return musicFacade;
+    }
+
+    public void setMusicFacade(MusicFacade musicFacade) {
+        this.musicFacade = musicFacade;
+    }
+    
+   
+
+    public DataModel<Music> allMusicsList() {
+     
+        List resultsSongs = musicFacade.findAll();
+        DataModel resultados2 = new ArrayDataModel<>(resultsSongs.toArray());
+        resultados = (DataModel<Music>)resultados2;
+        
+        if (resultsSongs != null) {
+            System.out.println("entrou");
+            return resultados;
+        } else {
+            System.out.println("saiu");
+            return null;
+        }
+
+    }
+    
+    private DataModel<Music> resultados;
+
+    public DataModel<Music> getResultados() {
+        return resultados;
+    }
+
+    public void setResultados(DataModel<Music> resultados) {
+        this.resultados = resultados;
+    }
+    
+
+    public LoginManagedBean getLmb() {
+        return lmb;
+    }
+
+    public void setLmb(LoginManagedBean lmb) {
+        this.lmb = lmb;
+    }
+
+}

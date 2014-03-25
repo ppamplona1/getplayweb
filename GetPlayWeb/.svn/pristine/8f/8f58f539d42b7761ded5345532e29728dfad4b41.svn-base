@@ -1,0 +1,109 @@
+package pt.uc.dei.aor.projeto3.grupod.managedBeans;
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.SessionScoped;
+import javax.inject.Inject;
+import pt.uc.dei.aor.projeto3.grupod.ejb.LogedUserEJB;
+import pt.uc.dei.aor.projeto3.grupod.entities.Playlist;
+import pt.uc.dei.aor.projeto3.grupod.entities.UserPlay;
+import pt.uc.dei.aor.projeto3.grupod.exceptions.PlaylistNameException;
+import pt.uc.dei.aor.projeto3.grupod.facades.PlaylistFacade;
+
+/**
+ *
+ * @author User
+ */
+@ManagedBean
+@SessionScoped
+public class EditPlaylistManagedBean {
+
+    /**
+     * Creates a new instance of EditPlaylistManagedBean
+     */
+    private Playlist playlist;
+    
+    private UserPlay user;
+    
+    private String errorMessage;
+
+    @EJB
+    private PlaylistFacade pf;
+    
+    
+    @Inject
+    private LogedUserEJB logedUserEJB;
+    
+
+
+    public EditPlaylistManagedBean() {
+
+    }
+
+    public Playlist getPlaylist() {
+        return playlist;
+    }
+
+    public void setPlaylist(Playlist playlist) {
+        this.playlist = playlist;
+    }
+    
+   
+    
+   
+
+    public String edit() {
+        try {
+            pf.searchPlaylist(playlist);
+        } catch (PlaylistNameException ex) {
+            Logger.getLogger(EditPlaylistManagedBean.class.getName()).log(Level.SEVERE, null, ex);
+            errorMessage = ex.getMessage();
+            return "editPlaylist";
+        }
+        
+        pf.edit(playlist);
+        return "myPlaylists";
+        
+
+    }
+
+    public PlaylistFacade getPf() {
+        return pf;
+    }
+
+    public void setPf(PlaylistFacade pf) {
+        this.pf = pf;
+    }
+
+    public UserPlay getU() {
+        return user;
+    }
+
+    public void setU(UserPlay u) {
+        this.user = u;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    
+    
+  
+    
+    
+    
+}

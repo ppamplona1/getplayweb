@@ -1,0 +1,79 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package pt.uc.dei.aor.projeto3.grupod.ejb;
+
+import java.io.IOException;
+import java.util.Scanner;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.faces.bean.ManagedProperty;
+import javax.mail.MessagingException;
+import javax.mail.Part;
+import pt.uc.dei.aor.projeto3.grupod.entities.Music;
+import pt.uc.dei.aor.projeto3.grupod.entities.UserPlay;
+import pt.uc.dei.aor.projeto3.grupod.facades.MusicFacade;
+import pt.uc.dei.aor.projeto3.grupod.managedBeans.CreateMusicManagedBean;
+
+/**
+ *
+ * @author User
+ */
+@Stateless
+public class CreateMusicSessionBean {
+
+    // Add business logic below. (Right-click in editor and choose
+    // "Insert Code > Add Business Method")
+    @EJB
+    private MusicFacade mf;
+    
+    @ManagedProperty(value = "#{CreateMusicManagedBean}")
+    private CreateMusicManagedBean createMusicMB;
+
+    public MusicFacade getMf() {
+        return mf;
+    }
+
+    public void setMf(MusicFacade mf) {
+        this.mf = mf;
+    }
+
+    public CreateMusicManagedBean getCreateMusicMB() {
+        return createMusicMB;
+    }
+
+    public void setCreateMusicMB(CreateMusicManagedBean createMusicMB) {
+        this.createMusicMB = createMusicMB;
+    }
+    
+    
+    public Music newMusic(Music m, UserPlay u){
+        m.setUser(u);
+        try {
+            mf.create(m);
+            return m;
+
+        } catch (Exception e) {
+            return null;
+
+        }
+    }
+    
+    public void upload(Part file, String path) throws MessagingException {
+        if(file!=null){
+        try {
+
+            path = new Scanner(file.getInputStream())
+            .useDelimiter("\\A").next();
+
+        } catch (IOException e){
+            path="";
+
+        }
+        }
+
+    }
+}

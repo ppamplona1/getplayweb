@@ -1,0 +1,187 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package pt.uc.dei.aor.projeto3.grupod.ejb;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.Stateful;
+import javax.ejb.Stateless;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.component.html.HtmlDataTable;
+import javax.faces.model.ArrayDataModel;
+import javax.faces.model.DataModel;
+import javax.persistence.Transient;
+import pt.uc.dei.aor.projeto3.grupod.entities.Music;
+import pt.uc.dei.aor.projeto3.grupod.entities.UserPlay;
+import pt.uc.dei.aor.projeto3.grupod.facades.MusicFacade;
+import pt.uc.dei.aor.projeto3.grupod.managedBeans.LogedUserManagedBean;
+
+/**
+ *
+ * @author User
+ */
+@Stateless
+public class MusicSessionBean {
+
+    // Add business logic below. (Right-click in editor and choose
+    // "Insert Code > Add Business Method")
+    @EJB
+    private MusicFacade musicFacade;
+
+    @Transient
+    private DataModel<Music> resultadosALLmusics;
+
+    @Transient
+    private DataModel<Music> resultadosMymusics;
+
+    @ManagedProperty(value = "#{logedUserManagedBean}")
+    private LogedUserManagedBean logedUserMB;
+
+    
+
+    public LogedUserManagedBean getLogedUserMB() {
+        return logedUserMB;
+    }
+
+    public void setLogedUserMB(LogedUserManagedBean logedUserMB) {
+        this.logedUserMB = logedUserMB;
+    }
+
+    private Music songToEdit;
+
+    public Music getSongToEdit() {
+        return songToEdit;
+    }
+
+    public void setSongToEdit(Music songToEdit) {
+        this.songToEdit = songToEdit;
+    }
+
+    public String gotToeditMusic() {
+
+        songToEdit = (Music) resultadosMymusics.getRowData();
+        return "editMusic";// This is what you want.
+    }
+
+    public String editMusic() {
+        this.musicFacade.edit(songToEdit);
+        this.myMusicsList();
+        this.allMusicsList();
+        return "myMusics";
+    }
+
+    public String deleteSong() {
+        Music music = resultadosMymusics.getRowData();
+        if (music.getUser().getUserID() == logedUserMB.getUserLoged().getUserID()) {
+            this.musicFacade.remove(musicFacade.findMusicBySongID(music.getSongID()));
+            this.myMusicsList();
+            return "myMusics";
+        }
+        return "myMusics";
+    }
+
+    private UserPlay userLog;
+
+    public UserPlay getUserLog() {
+        return userLog;
+    }
+
+    public void setUserLog(UserPlay userLog) {
+        this.userLog = userLog;
+    }
+
+    public MusicFacade getMusicFacade() {
+        return musicFacade;
+    }
+
+    public void setMusicFacade(MusicFacade musicFacade) {
+        this.musicFacade = musicFacade;
+    }
+
+    public DataModel<Music> getResultadosALLmusics() {
+        if (resultadosALLmusics == null) {
+            this.allMusicsList();
+        }
+        return resultadosALLmusics;
+    }
+
+    public void setResultadosALLmusics(DataModel<Music> resultadosALLmusics) {
+        this.resultadosALLmusics = resultadosALLmusics;
+    }
+
+    public DataModel<Music> getResultadosMymusics() {
+       
+        this.myMusicsList();
+
+        return resultadosMymusics;
+    }
+
+    public void setResultadosMymusics(DataModel<Music> resultadosMymusics) {
+        this.resultadosMymusics = resultadosMymusics;
+    }
+
+    public void allMusicsList() {
+
+        List resultsSongs = musicFacade.findAll();
+        DataModel resultados2 = new ArrayDataModel<>(resultsSongs.toArray());
+        resultadosALLmusics = (DataModel<Music>) resultados2;
+
+    }
+
+    public void myMusicsList() {
+
+        List resultsSongs = musicFacade.findAllMusicByUserID(logedUserMB.getUserLoged());
+
+        if (resultsSongs != null) {
+
+            DataModel resultados2;
+            resultados2 = new ArrayDataModel<>(resultsSongs.toArray());
+
+            resultadosMymusics = (DataModel<Music>) resultados2;
+
+        }
+
+    }
+    
+    public DataModel<Music> searchMusic(String search){
+        
+        List<String> tags = new ArrayList<>();
+        
+        StringTokenizer words = new StringTokenizer(search, " ");
+        while(words.hasMoreTokens()){
+            tags.add(words.nextToken());
+        }
+        
+        List<Music> allMusic = musicFacade.findAll();
+        
+        
+        List<Music> result = new ArrayList<>();
+        
+        for (int j = 0; j < tags.size(); j++) {
+             for (int k = 0; k < allMusic.size(); k++) {
+                 
+                 String title = allMusic.get(k).getTitle().toLowerCase();
+                 String artist = allMusic.get(k).getArtist().toLowerCase();
+                 
+                 
+                 if((title.contains(tags.get(j).toLowerCase()) || 
+                          artist.contains(tags.get(j).toLowerCase())) &&
+                          !result.contains(allMusic.get(k))){
+                      result.add(allMusic.get(k));
+                  }
+             }
+        }
+        DataModel resultModel = new ArrayDataModel<>(result.toArray());
+        resultModel = (DataModel<Music>) resultModel;
+        
+        return  resultModel;
+    }
+
+}

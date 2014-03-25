@@ -1,0 +1,306 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package pt.uc.dei.aor.projeto3.grupod.managedBeans;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.RequestScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.Part;
+import pt.uc.dei.aor.projeto3.grupod.ejb.LogedUserEJB;
+import pt.uc.dei.aor.projeto3.grupod.ejb.MusicEJB;
+import pt.uc.dei.aor.projeto3.grupod.entities.Music;
+import pt.uc.dei.aor.projeto3.grupod.exceptions.MusicInPlaylistException;
+import pt.uc.dei.aor.projeto3.grupod.exceptions.ReleaseYearInvalidException;
+import pt.uc.dei.aor.projeto3.grupod.exceptions.NotMp3Exception;
+
+/**
+ *
+ * @author User
+ */
+@Named
+@RequestScoped
+public class MusicController {
+
+    
+
+    @Inject
+    private LogedUserEJB logedUserEJB;
+    
+    @Inject
+    private MusicEJB musicEJB;
+
+    private Music music;
+    private Part file;
+    private String isMP3ErrorMessage;
+    private String year;
+    private String yearInvalid;
+    private String selectedItem;
+    private String errorCopyingtoPlaylist;
+    private List<Music> searchResults;
+    private String search;
+    private String numberOfResults;
+
+    
+    
+    
+    private List<Music> musicResultsOfTheUserLoged;
+
+    /**
+     * Creates a new instance of MusicController
+     */
+    public MusicController() {
+    }
+
+    @PostConstruct
+    public void init() {
+        if (music == null) {
+            music = new Music();
+        }
+        musicResultsOfTheUserLoged = musicEJB.myMusicsList();
+    }
+
+    public List<Music> getSearchResults() {
+        return searchResults;
+    }
+
+    public void setSearchResults(List<Music> searchResults) {
+        this.searchResults = searchResults;
+    }
+
+    public String getSearch() {
+        return search;
+    }
+
+    public void setSearch(String search) {
+        this.search = search;
+    }
+
+    public String getNumberOfResults() {
+        return numberOfResults;
+    }
+
+    public void setNumberOfResults(String numberOfResults) {
+        this.numberOfResults = numberOfResults;
+    }
+    
+    
+
+    public String getErrorCopyingtoPlaylist() {
+        return errorCopyingtoPlaylist;
+    }
+
+    public void setErrorCopyingtoPlaylist(String errorCopyingtoPlaylist) {
+        this.errorCopyingtoPlaylist = errorCopyingtoPlaylist;
+    }
+    
+    
+
+    public String getSelectedItem() {
+        return selectedItem;
+    }
+
+    public void setSelectedItem(String selectedItem) {
+        this.selectedItem = selectedItem;
+    }
+    
+    
+
+    public Music getMusic() {
+        return music;
+    }
+
+    public void setMusic(Music music) {
+        this.music = music;
+    }
+
+    public LogedUserEJB getLogedUserEJB() {
+        return logedUserEJB;
+    }
+
+    public void setLogedUserEJB(LogedUserEJB logedUserEJB) {
+        this.logedUserEJB = logedUserEJB;
+    }
+
+    public Part getFile() {
+        return file;
+    }
+
+    public void setFile(Part file) {
+        this.file = file;
+    }
+
+    public String getIsMP3ErrorMessage() {
+        return isMP3ErrorMessage;
+    }
+
+    public void setIsMP3ErrorMessage(String isMP3ErrorMessage) {
+        this.isMP3ErrorMessage = isMP3ErrorMessage;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public void setYear(String year) {
+        this.year = year;
+    }
+
+    public String getYearInvalid() {
+        return yearInvalid;
+    }
+
+    public void setYearInvalid(String yearInvalid) {
+        this.yearInvalid = yearInvalid;
+    }
+
+    public List<Music> getMusicResultsOfTheUserLoged() {
+        return musicEJB.myMusicsList();
+    }
+
+    public void setMusicResultsOfTheUserLoged(List<Music> musicResultsOfTheUserLoged) {
+        this.musicResultsOfTheUserLoged = musicResultsOfTheUserLoged;
+    }
+
+    /**
+     *
+     * method to validate the part file uploaded
+     *
+     * @throws NotMp3Exception
+     *
+     */
+    public void isMP3() throws NotMp3Exception {
+        if (!"audio/mpeg".equals(file.getContentType()) & !"audio/mp3".equals(file.getContentType())) {
+            Exception ex = new NotMp3Exception();
+
+            throw new NotMp3Exception();
+        }
+
+    }
+
+    /**
+     * method for validating the releaseYear of the new music.
+     *
+     * @throws ReleaseYearInvalidException
+     *
+     */
+    public int verifyYear() throws ReleaseYearInvalidException {
+
+        try {
+
+            return musicEJB.validateYear(year);
+
+        } catch (ReleaseYearInvalidException e) {
+
+            throw new ReleaseYearInvalidException();
+
+        }
+
+    }
+
+    /**
+     * persists the new music to the database
+     *
+     * @return the myMusics page if the creation of the new music is successful
+     *
+     */
+    public String newMusic() {
+
+        try {
+            music.setReleaseYEAR(verifyYear());
+            isMP3();
+
+        } catch (ReleaseYearInvalidException e) {
+            yearInvalid = e.getLocalizedMessage();
+            java.util.logging.Logger.getLogger(MusicController.class.getName()).log(Level.SEVERE, null, e);
+            return "newMusic";
+        } catch (NotMp3Exception e) {
+            isMP3ErrorMessage = e.getMessage();
+            java.util.logging.Logger.getLogger(MusicController.class.getName()).log(Level.SEVERE, null, e);
+            return "newMusic";
+        } catch (Exception ex) {
+            Logger.getLogger(MusicController.class.getName()).log(Level.SEVERE, null, ex);
+            return "newMusic";
+        }
+        music.setUser(logedUserEJB.getUser());
+        music.setPath(musicEJB.upload(file, music));
+        musicEJB.newMusic(music);
+        return "myMusics";
+
+    }
+
+    /**
+     * deletes a song from the database
+     *
+     * @param song
+     * @return
+     */
+    public String deleteSong(Music song) {
+        String result;
+     
+        try {       
+            return musicEJB.deleteSong(song);
+        } catch (Exception ex) {
+      
+            Logger.getLogger(MusicController.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+      
+        
+    }
+
+    public String gotToeditMusic(Music song) {
+
+        logedUserEJB.setActiveMusic(song);
+
+        return "editMusic";
+    }
+
+    public String edit(Music song) {
+        int ano;
+        if (!year.isEmpty()) {
+            try {
+                song.setReleaseYEAR(verifyYear());
+
+            } catch (ReleaseYearInvalidException ex) {
+
+                yearInvalid = ex.getMessage();
+
+                java.util.logging.Logger.getLogger(MusicController.class.getName()).log(Level.SEVERE, null, ex);
+                return "editMusic";
+            }
+        }
+  
+        return musicEJB.editMusic(song);
+       
+    }
+    
+    public String copyToplaylist(Music m) {
+        try {
+            return musicEJB.copyToplaylistAllMusics(m, selectedItem);
+        } catch (MusicInPlaylistException ex) {
+            errorCopyingtoPlaylist = ex.getMessage();
+            Logger.getLogger(MusicController.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+
+    }
+    
+    public String makeSearch(){
+        
+        searchResults = musicEJB.searchMusic(search);
+        int n = searchResults.size();
+        numberOfResults = "We found "+n+" results for your search";
+        return "search";
+    }
+
+}

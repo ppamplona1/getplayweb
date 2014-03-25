@@ -1,0 +1,222 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package pt.uc.dei.aor.projeto3.grupod.managedBeans;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.GregorianCalendar;
+import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.RequestScoped;
+import javax.faces.model.ArrayDataModel;
+import javax.faces.model.DataModel;
+import pt.uc.dei.aor.projeto3.grupod.ejb.CreatePlaylist;
+import pt.uc.dei.aor.projeto3.grupod.ejb.PlaylistSessionBean;
+import pt.uc.dei.aor.projeto3.grupod.entities.Playlist;
+import pt.uc.dei.aor.projeto3.grupod.facades.PlaylistFacade;
+
+/**
+ *
+ * @author brunocosta
+ */
+@ManagedBean
+@RequestScoped
+public class PlaylistManagedBean implements Serializable {
+
+    @EJB
+    private CreatePlaylist cp;
+
+    @ManagedProperty(value = "#{logedUserManagedBean}")
+    private LogedUserManagedBean logedUserMB;
+    
+    private Playlist playlist;
+
+    private DataModel<Playlist> resultsMyPlaylists;
+
+    private String messageError;
+
+    @EJB
+    private PlaylistSessionBean psb;
+
+    @EJB
+    private PlaylistFacade pf;
+
+    private List<Playlist> listPlay;
+
+    @ManagedProperty(value = "#{editPlaylistManagedBean}")
+    private EditPlaylistManagedBean epmb;
+
+        
+
+    /**
+     * Creates a new instance of PlaylistManagedBean
+     */
+    public PlaylistManagedBean() {
+        
+
+    }
+
+    @PostConstruct
+    public void init() {
+        psb.setUserLogged(this.logedUserMB.getUserLoged());
+        resultsMyPlaylists = psb.myPlaylistsList();
+        playlist = new Playlist();
+    }
+
+    public CreatePlaylist getCp() {
+        return cp;
+    }
+
+    public void setCp(CreatePlaylist cp) {
+        this.cp = cp;
+    }
+
+    public Playlist getPlaylist() {
+        return playlist;
+    }
+
+    public void setPlaylist(Playlist playlist) {
+        this.playlist = playlist;
+    }
+
+    
+
+    public LogedUserManagedBean getLogedUserMB() {
+        return logedUserMB;
+    }
+
+    public void setLogedUserMB(LogedUserManagedBean logedUserMB) {
+        this.logedUserMB = logedUserMB;
+    }
+
+    public EditPlaylistManagedBean getEpmb() {
+        epmb.setPlaylist(playlist);
+        return epmb;
+    }
+
+    public void setEpmb(EditPlaylistManagedBean epmb) {
+        this.epmb = epmb;
+    }
+
+    public String newPlaylist() {
+        GregorianCalendar gc = new GregorianCalendar();
+        playlist.setCreationDate(gc.getTime());
+        playlist.setUser(this.logedUserMB.getUserLoged());
+
+        String result = this.cp.newPlaylist(playlist);
+        resultsMyPlaylists = psb.myPlaylistsList();
+        return result;
+    }
+
+  
+
+    public DataModel<Playlist> getResultsMyPlaylists() {
+
+        return resultsMyPlaylists;
+
+    }
+
+    public void setResultsMyPlaylists(DataModel<Playlist> resultsMyPlaylists) {
+        this.resultsMyPlaylists = resultsMyPlaylists;
+    }
+
+    public PlaylistSessionBean getPsb() {
+        return psb;
+    }
+
+    public void setPsb(PlaylistSessionBean psb) {
+        this.psb = psb;
+    }
+
+    public List<Playlist> getListPlay() {
+        listPlay = new ArrayList();
+        listPlay = this.psb.getListMyPlaylists();
+        return listPlay;
+    }
+
+    public void setListPlay(List<Playlist> listPlay) {
+        this.listPlay = listPlay;
+    }
+
+    public String getMessageError() {
+        messageError = cp.getMessageError();
+        cp.setMessageError("");
+        return messageError;
+    }
+
+    public void setMessageError(String messageError) {
+        this.messageError = messageError;
+    }
+
+    public String cancelCreatePlaylist() {
+        cp.setMessageError("");
+        messageError = "";
+        return "mainWindow";
+    }
+
+    public String elimina() {
+        Playlist play = (Playlist) this.resultsMyPlaylists.getRowData();
+        pf.remove(play);
+        return "myPlaylists";
+    }
+
+    public PlaylistFacade getPf() {
+        return pf;
+    }
+  
+    public void setPf(PlaylistFacade pf) {
+        this.pf = pf;
+    }
+
+    public String goToPlaylist(int a) {
+        if (a == 1) {
+            epmb.setPlaylist((Playlist) resultsMyPlaylists.getRowData());
+            epmb.setErrorMessage("");
+            return "editPlaylist";
+        } else {
+            
+//            pmlmb.setP((Playlist) resultsMyPlaylists.getRowData());
+            return "onePlaylist";
+        }
+    }
+
+    public String sortByOrderName(int a) {
+
+        List<Playlist> results = pf.findAllPlaylistsByUserIDName(a);
+        DataModel resultsDM;
+        resultsDM = new ArrayDataModel<>(results.toArray());
+        resultsMyPlaylists = (DataModel) resultsDM;
+        return "myPlaylists";
+    }
+
+    public String sortByOrderDate(int a) {
+
+        List<Playlist> results = pf.findAllPlaylistsByUserIDDate(a);
+        DataModel resultsDM;
+        resultsDM = new ArrayDataModel<>(results.toArray());
+        resultsMyPlaylists = (DataModel) resultsDM;
+        return "myPlaylists";
+    }
+
+    public String sortByOrderSize(int a) {
+        List<Playlist> results = pf.findAllPlaylistsByUserID();
+        if (a == 1) {
+            Collections.sort(results);
+        } else {
+            Collections.sort(results, new Playlist.OrderBySizeDesc());
+        }
+
+        DataModel resultsDM;
+        resultsDM = new ArrayDataModel<>(results.toArray());
+        resultsMyPlaylists = (DataModel) resultsDM;
+        return "myPlaylists";
+    }
+
+}

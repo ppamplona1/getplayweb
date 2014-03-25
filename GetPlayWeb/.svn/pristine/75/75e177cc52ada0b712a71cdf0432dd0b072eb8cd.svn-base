@@ -1,0 +1,330 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <ui:insert name="metadata"/>
+        <f:event type="preRenderView" listener="#{userController.verifyUser()}" />
+        <link href="resources/css/table-style.css" rel="stylesheet" type="text/css" />
+    </h:head>
+    <h:body>
+
+        <ui:composition template="./mainTemplate.xhtml">
+            
+            
+            <ui:composition template="./mainTemplate.xhtml">
+
+            <ui:define name ="content">
+
+                <table class="full" border="0" cellspacing="20">
+                    <thead>
+                    </thead>
+                    <tbody align="center">
+                        <br /><br /><br />
+                        <h4>My Playlist</h4>
+
+
+                        <tr>
+                            <td align="right">
+                                <h:form>
+                                    <h:commandButton title="New Music" image="resources/addPlay.png" action="#{musicController.goToAddMusic}"/>
+                                </h:form>
+
+                                <h:form binding="#{musicController.addMusicAll}" rendered="false" enctype="multipart/form-data">
+
+                                    <table align="right" border="0" cellspacing="10">
+                                        <thead>
+
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <h:outputLabel value="Title"/>
+                                                </td>
+                                                <td>
+                                                    <h:inputText id="title" value="#{musicController.music.title}"/>
+                                                </td>
+                                                <td>
+                                                    <h:message for="title" style="color: red"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <h:outputLabel value="Artist"/>
+                                                </td>
+                                                <td>
+                                                    <h:inputText id="artist" value="#{musicController.music.artist}"/>
+                                                </td>
+                                                <td>
+                                                    <h:message for="artist" style="color: red"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <h:outputLabel value="Album"/>
+                                                </td>
+                                                <td>
+                                                    <h:inputText id="album" value="#{musicController.music.album}"/>
+                                                </td>
+                                                <td>
+                                                    <h:message for="album" style="color: red"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <h:outputLabel value="Release Year"/>
+                                                </td>
+                                                <td>
+                                                    <h:inputText id="releaseYEAR" value="#{musicController.music.releaseYEAR}" />
+                                                </td>
+                                                <td>
+                                                    <h:message for="releaseYEAR" style="color: red" />
+                                                    <h:outputLabel style="color: red" value="#{musicController.yearInvalid}"  />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <h:outputLabel value="File"/>
+                                                </td>
+                                                <td>
+                                                    <h:inputFile id="file" value="#{musicController.file}"/>
+                                                </td>
+                                                <td>
+                                                    <h:outputLabel value="#{musicController.isMP3ErrorMessage}" style="color: red"/>
+                                                    <h:message for="file" style="color: red"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <h:commandButton class="buttonLogin" immediate="true" value="Cancel" action="#{musicController.cancelMusic}"/>
+                                                </td>
+                                                <td>
+                                                    <h:commandButton class="buttonLogin" value="Upload" action="#{musicController.newMusic}"/>
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+
+                                </h:form>
+                            </td>
+                            <td>
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td align="center">
+                                <h:form>
+
+                                    <h:dataTable class="tables" id="table1" value="#{musicController.allMusic}" var="music"
+                                                 headerClass="person-table-header"
+                                                 rowClasses="person-table-odd-row,person-table-even-row">
+
+
+                                        <h:column>
+
+                                            <f:facet name="header">
+                                                Title
+                                            </f:facet>
+                                            #{music.title}
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet name="header">
+                                                Artist
+                                            </f:facet>
+                                            #{music.artist}
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet name="header">
+                                                Album
+                                            </f:facet>
+                                            #{music.album}
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet name="header">
+                                                Release Year
+                                            </f:facet>
+                                            #{music.releaseYEAR}
+                                        </h:column>
+
+                                        <h:column>
+                                            <f:facet name="header">
+                                                Copy to Playlist
+                                            </f:facet>
+
+                                            <h:commandButton class="buttonLogin" value="Copy" action="#{musicController.showListAll(music)}"/>
+                                        </h:column>
+
+                                    </h:dataTable>
+                                    <br/>
+                                    <h:outputLabel value="#{musicController.errorCopyingtoPlaylist}" style="color: red"/>
+
+                                </h:form> 
+
+                            </td>
+                            <td align="center">
+                                <h:form binding="#{musicController.addToPlaylistAll}" rendered="false">
+
+                                    <h3>Choose Playlist to copy</h3>
+
+                                    <p>
+                                        <h:selectOneMenu value="#{musicController.selectedItem}" label="Playlists">
+
+                                            <f:selectItems value="#{musicPlaylistController.playlistList}"/>
+                                        </h:selectOneMenu>
+                                        <h:inputHidden value="#{musicController.musicID}"/>
+                                        <h:commandButton class="buttonLogin" value="Select" action="#{musicController.copyToplaylist}"/></p>
+                                    <p>
+                                        <h:commandButton class="buttonLogin" value="Cancel" action="#{musicController.cancelCopyToPlaylistAll}"/></p>
+
+
+                                </h:form>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+
+
+
+            </ui:define>
+        </ui:composition>
+
+            <ui:define name ="content">
+
+
+                <br/>
+                <h:form binding="#{musicPlaylistController.tablePlaylists}">
+                    <h1>My Playlists</h1>
+                    <br/>
+                    <h:dataTable id="table2" value="#{musicPlaylistController.playlistList}" var="p"
+                                 headerClass="person-table-header"
+                                 rowClasses="person-table-odd-row,person-table-even-row"
+
+                                 rendered="true">
+
+
+                        <h:column>
+                        
+                            <f:facet name="header">
+                                Name
+                                <br/>
+                                <h:commandButton image="resources/Arrow-Up-icon.png" action="#{musicPlaylistController.sortByOrderName(1)}"/>
+                                <h:commandButton image="resources/Arrow-Down-icon.png" action="#{musicPlaylistController.sortByOrderName(2)}"/>
+                            </f:facet>
+                            #{p.name}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                Creation Date
+                                <br/>
+                                <h:commandButton image="resources/Arrow-Up-icon.png" action="#{musicPlaylistController.sortByOrderDate(1)}"/>
+                                <h:commandButton image="resources/Arrow-Down-icon.png" action="#{musicPlaylistController.sortByOrderDate(2)}"/>
+                            </f:facet>
+                            #{p.creationDate}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                Size
+                                <br/>
+                                <h:commandButton image="resources/Arrow-Up-icon.png" action="#{musicPlaylistController.sortByOrderSize(1)}"/>
+                                <h:commandButton image="resources/Arrow-Down-icon.png" action="#{musicPlaylistController.sortByOrderSize(2)}"/>
+                            </f:facet>
+                            #{p.songs.size()}
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">
+                                Open
+                            </f:facet>
+                            <h:commandButton id="OpenPlaylist" value="OpenPlaylist" action="#{musicPlaylistController.openPlaylist(p)}"> 
+                         
+                            </h:commandButton>
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">
+                                Delete
+                            </f:facet>
+                            <h:commandButton id="removePlaylist" value="DeletePlaylist" action="#{musicPlaylistController.delete(p)}">
+                               
+                            </h:commandButton>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                Edit
+                            </f:facet>
+                            <h:commandButton value="EditPlaylist" action="#{playlistController.goToEditPlaylist(p)}"/> 
+                        </h:column>
+
+                    </h:dataTable>
+                </h:form>
+                
+                <h:form>
+                    
+                    
+        
+                    
+                    <h:panelGroup binding="#{musicPlaylistController.viewPlaylist}" rendered="false">
+                       <h:inputHidden value="#{musicPlaylistController.currentPlay}" converter="#{musicPlaylistController}"/>                       <h:inputHidden value="#{musicPlaylistController.id}" id="playID" />
+                       <h:outputLabel value="#{musicPlaylistController.currentPlay.name}"/>
+                       <h:dataTable id="table2" value="#{musicPlaylistController.currentPlay.songs}" var="music"
+                                 headerClass="person-table-header"
+                                 rowClasses="person-table-odd-row,person-table-even-row"
+                                 rendered="true" >
+                        <h:column>
+
+                            <f:facet name="header">
+                                Title
+                            </f:facet>
+                            #{music.title}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                Artist
+                            </f:facet>
+                            #{music.artist}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                Album
+                            </f:facet>
+                            #{music.album}
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                Release Year
+                            </f:facet>
+                            #{music.releaseYEAR}
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">
+                                Delete
+                            </f:facet>
+                            <h:commandButton id="removeMusic" value="DeleteMusic"  action="#{musicPlaylistController.removeMusic(music)}"> 
+
+                            </h:commandButton>
+                        </h:column>
+
+
+                    </h:dataTable>
+                     
+                   </h:panelGroup>
+                    
+                </h:form>
+
+
+            </ui:define>
+
+        </ui:composition>
+
+
+    </h:body>
+</html>
+

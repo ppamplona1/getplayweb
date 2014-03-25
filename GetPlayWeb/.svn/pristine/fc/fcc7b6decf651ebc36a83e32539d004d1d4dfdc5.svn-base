@@ -1,0 +1,169 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package pt.uc.dei.aor.projeto3.grupod.ejb;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.Stateful;
+import javax.ejb.Stateless;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.component.html.HtmlDataTable;
+import javax.faces.model.ArrayDataModel;
+import javax.faces.model.DataModel;
+import javax.inject.Inject;
+import javax.persistence.Transient;
+import pt.uc.dei.aor.projeto3.grupod.entities.Music;
+import pt.uc.dei.aor.projeto3.grupod.entities.UserPlay;
+import pt.uc.dei.aor.projeto3.grupod.facades.MusicFacade;
+
+/**
+ *
+ * @author User
+ */
+@Stateless
+public class MusicSessionBean {
+
+    // Add business logic below. (Right-click in editor and choose
+    // "Insert Code > Add Business Method")
+    @EJB
+    private MusicFacade musicFacade;
+    
+    @Inject
+    private LogedUserEJB logedUserEJB;
+    
+    private UserPlay userLog;
+    
+    private Music music;
+
+    private DataModel<Music> resultadosMymusics;
+
+    
+
+    public Music getMusic() {
+        return music;
+    }
+
+    public void setMusic(Music music) {
+        this.music = music;
+    }
+    
+    
+
+    
+
+    public String editMusic(Music music) {
+        this.musicFacade.edit(music);
+        return "myMusics";
+    }
+
+    public String deleteSong() {
+        Music music = resultadosMymusics.getRowData();
+        if (music.getUser().getUserID() == logedUserEJB.getUser().getUserID()) {
+            this.musicFacade.remove(musicFacade.findMusicBySongID(music.getSongID()));
+            this.myMusicsList();
+            return "myMusics";
+        }
+        return "myMusics";
+    }
+
+    
+
+    public UserPlay getUserLog() {
+        return userLog;
+    }
+
+    public void setUserLog(UserPlay userLog) {
+        this.userLog = userLog;
+    }
+
+    public MusicFacade getMusicFacade() {
+        return musicFacade;
+    }
+
+    public void setMusicFacade(MusicFacade musicFacade) {
+        this.musicFacade = musicFacade;
+    }
+
+    public DataModel<Music> getResultadosALLmusics() {
+
+
+        return allMusicsList();
+    }
+
+    public DataModel<Music> getResultadosMymusics() {
+
+        this.myMusicsList();
+
+        return resultadosMymusics;
+    }
+
+    public void setResultadosMymusics(DataModel<Music> resultadosMymusics) {
+        this.resultadosMymusics = resultadosMymusics;
+    }
+
+    public DataModel<Music> allMusicsList() {
+
+        List resultsSongs = musicFacade.findAll();
+        DataModel resultados2 = new ArrayDataModel<>(resultsSongs.toArray());
+        return (DataModel<Music>) resultados2;
+
+    }
+
+    public void myMusicsList() {
+
+        List resultsSongs = musicFacade.findAllMusicByUserID(logedUserEJB.getUser());
+
+        if (resultsSongs != null) {
+
+            DataModel resultados2;
+            resultados2 = new ArrayDataModel<>(resultsSongs.toArray());
+
+            resultadosMymusics = (DataModel<Music>) resultados2;
+
+        }
+
+    }
+    
+    public DataModel<Music> searchMusic(String search){
+        
+        List<String> tags = new ArrayList<>();
+        
+        StringTokenizer words = new StringTokenizer(search, " ");
+        while(words.hasMoreTokens()){
+            tags.add(words.nextToken());
+        }
+        
+        List<Music> allMusic = musicFacade.findAll();
+        
+        
+        List<Music> result = new ArrayList<>();
+        
+        for (int j = 0; j < tags.size(); j++) {
+             for (int k = 0; k < allMusic.size(); k++) {
+                 
+                 String title = allMusic.get(k).getTitle().toLowerCase();
+                 String artist = allMusic.get(k).getArtist().toLowerCase();
+                 
+                 
+                 if((title.contains(tags.get(j).toLowerCase()) || 
+                          artist.contains(tags.get(j).toLowerCase())) &&
+                          !result.contains(allMusic.get(k))){
+                      result.add(allMusic.get(k));
+                  }
+             }
+        }
+        
+        DataModel resultModel = new ArrayDataModel<>(result.toArray());
+        resultModel = (DataModel<Music>) resultModel;
+        
+        return  resultModel;
+    }
+
+}

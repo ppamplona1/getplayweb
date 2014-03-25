@@ -1,0 +1,84 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package managedBeans;
+
+import beans.UserFacade;
+import entities.UserPlay;
+import java.io.Serializable;
+import javax.ejb.EJB;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.SessionScoped;
+import outros.EncriptarMD5;
+
+/**
+ *
+ * @author brunocosta
+ */
+@ManagedBean
+@SessionScoped
+public class RegistrationManagedBean implements Serializable {
+    @EJB
+    private UserFacade userFacade;
+    
+    @ManagedProperty(value = "#{loginManagedBean}")
+    private LoginManagedBean lmb;
+    
+    private UserPlay user;
+    
+    private String newUserPassword2;
+    
+    
+    public RegistrationManagedBean() {
+        this.user = new UserPlay();
+    }
+
+    public UserPlay getUser() {
+        return user;
+    }
+
+    public void setUser(UserPlay user) {
+        this.user = user;
+    }
+    
+    public String getNewUserPassword2() {
+        return newUserPassword2;
+    }
+
+    public void setNewUserPassword2(String newUserPassword2) {
+        this.newUserPassword2 = newUserPassword2;
+    }
+
+    public LoginManagedBean getLmb() {
+        return lmb;
+    }
+
+    public void setLmb(LoginManagedBean lmb) {
+        this.lmb = lmb;
+    }
+    
+    
+    public String newUser(){
+        
+        if(user.getPassword().equals(newUserPassword2)){
+            
+            String pass = EncriptarMD5.cryptWithMD5(newUserPassword2);
+            user.setPassword(pass);
+            
+            userFacade.create(user);
+            
+            lmb.setLogedUser(user);
+            
+            return "mainWindow";
+        }
+        
+        return "newUser";
+        
+    }
+    
+    
+}

@@ -1,0 +1,51 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package pt.uc.dei.aor.projeto3.grupod.facades;
+
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import pt.uc.dei.aor.projeto3.grupod.entities.UserPlay;
+
+/**
+ *
+ * @author brunocosta
+ */
+@Stateless
+public class UserPlayFacade extends AbstractFacade<UserPlay> {
+    @PersistenceContext(unitName = "GetPlayWebPU")
+    private EntityManager em;
+
+    @Override
+    protected EntityManager getEntityManager() {
+        return em;
+    }
+
+    public UserPlayFacade() {
+        super(UserPlay.class);
+    }
+    
+    public void setEm(EntityManager em) {
+        this.em = em;
+    }
+    
+    
+    public UserPlay findUserByMail(String eMail){
+        
+        Query q = em.createNamedQuery("UserPlay.findByEmail");
+        q.setParameter("eMail", eMail);
+        try{
+        UserPlay user = (UserPlay) q.getSingleResult();
+        return user;
+        }
+        catch(Exception e){
+            return null;
+        }
+        
+    }
+}

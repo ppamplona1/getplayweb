@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <h:outputStylesheet name="./css/default.css"/>
+        <h:outputStylesheet name="./css/cssLayout.css"/>
+        <title>Facelets Template</title>
+    </h:head>
+
+    <h:body>
+
+        <div id="top" class="top">
+            
+            <ui:insert name="top">
+
+
+                <h:form>
+                    
+                    <table border="0" width="1000">
+                        <thead>
+                            
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div align="left">
+                                        <h:inputText value="#{searchManagedBean.serach}"/>
+                                        <h:commandButton value="Search" action="#{searchManagedBean.makeSearch}"/>  
+
+                                    </div>
+                                </td>
+                                <td>
+                                    <div align="right">
+                                        <h:outputText value="#{logedUserEJB.user.name}" />
+                                        <h:commandButton value="Profile" action="profile"/>
+                                        <h:commandButton value="Logout" action="#{userController.makeLogout()}"/>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    
+                </h:form>
+
+            </ui:insert>
+        </div>
+
+        <div id="left">
+            <ui:insert name="left">
+                <h:form>
+                    
+                    <table border="0" width="150" cellspacing="10">
+                        <thead>
+                            
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <h:commandButton style="width: 100%; height: 100%" value="Home" action="mainWindow"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h:commandButton style="width: 100%; height: 100%" value="All Musics" action="allMusics"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h:commandButton style="width: 100%; height: 100%" value="My Musics" action="myMusics"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h:commandButton style="width: 100%; height: 100%" value="Insert music" action="newMusic"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h:commandButton style="width: 100%; height: 100%" value="New Playlist" action="newPlaylist"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h:commandButton style="width: 100%; height: 100%" value="My Playlist" action="myPlaylists"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    
+
+                </h:form>
+            </ui:insert>
+        </div>
+        <div id="content" class="left_content" style="color: black">
+            <div align="center">
+                <ui:insert name="content"></ui:insert>
+            </div>
+        </div>
+
+    </h:body>
+
+</html>

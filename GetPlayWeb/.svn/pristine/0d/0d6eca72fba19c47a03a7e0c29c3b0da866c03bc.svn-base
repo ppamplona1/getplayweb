@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <ui:insert name="metadata"/>
+            <f:event type="preRenderView" listener="#{loginManagedBean.isLogged()}" />
+        <link href="css/table-style.css" rel="stylesheet" type="text/css" />
+        <h:form>
+            <h:commandButton value="Profile" action="profile"/>
+        </h:form>
+    </h:head>
+    <h:body>
+
+        <h:form>
+             
+            <h:outputText value="#{logedUserManagedBean.userLoged.name}" />
+            
+            <h:commandButton value="Logout" action="#{loginManagedBean.logout}"/>
+            
+            <h:commandButton value="All Musics" action="#{navigationManagedBean.allMusics}"/>
+            
+            <h:commandButton value="My Musics" action="#{navigationManagedBean.myMusics}"/>
+            
+            <h:commandButton value="Insert music" action="#{navigationManagedBean.newMusic}"/>
+            
+            <h:commandButton value="New Playlist" action="newPlaylist"/>
+            
+            <h:commandButton value="My Playlist" action="myPlaylists"/>
+            
+        </h:form>
+    </h:body>
+</html>
+

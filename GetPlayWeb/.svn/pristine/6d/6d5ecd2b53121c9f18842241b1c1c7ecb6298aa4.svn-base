@@ -1,0 +1,225 @@
+package pt.uc.dei.aor.projeto3.grupod.managedBeans;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.enterprise.context.RequestScoped;
+import javax.faces.context.FacesContext;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpSession;
+import pt.uc.dei.aor.projeto3.grupod.ejb.ActiveObjectsEJB;
+import pt.uc.dei.aor.projeto3.grupod.entities.UserPlay;
+
+import pt.uc.dei.aor.projeto3.grupod.facades.PlaylistFacade;
+import pt.uc.dei.aor.projeto3.grupod.facades.UserPlayFacade;
+
+@Named
+@RequestScoped
+public class UserController {
+
+    @Inject
+    private ActiveObjectsEJB activeObjectsEJB;
+
+    @Inject
+    private UserPlayFacade userPlayFacade;
+
+    private UserPlay user;
+    private String loginEmail;
+    private String loginPassword;
+    private String password1;
+    private String password2;
+    private String emailExists;
+    private String passwordMatch;
+    private String userExists;
+    private String passwordCorrect;
+    private String userName;
+
+    public UserController() {
+
+    }
+
+    @PostConstruct
+    public void init() {
+
+        if (activeObjectsEJB.getUser() == null) {
+            this.user = new UserPlay();
+        } else {
+            this.user = activeObjectsEJB.getUser();
+            userName = user.getName();
+        }
+
+    }
+
+    public String getUserName() {
+        return activeObjectsEJB.getUser().getName();
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserExists() {
+        return userExists;
+    }
+
+    public void setUserExists(String userExists) {
+        this.userExists = userExists;
+    }
+
+    public String getPasswordCorrect() {
+        return passwordCorrect;
+    }
+
+    public void setPasswordCorrect(String passwordCorrect) {
+        this.passwordCorrect = passwordCorrect;
+    }
+
+    public ActiveObjectsEJB getActiveObjectsEJB() {
+        return activeObjectsEJB;
+    }
+
+    public void setActiveObjectsEJB(ActiveObjectsEJB activeObjectsEJB) {
+        this.activeObjectsEJB = activeObjectsEJB;
+    }
+
+    public UserPlay getUser() {
+        return user;
+    }
+
+    public void setUser(UserPlay user) {
+        this.user = user;
+    }
+
+    public String getLoginEmail() {
+        return loginEmail;
+    }
+
+    public void setLoginEmail(String loginEmail) {
+        this.loginEmail = loginEmail;
+    }
+
+    public String getLoginPassword() {
+        return loginPassword;
+    }
+
+    public void setLoginPassword(String loginPassword) {
+        this.loginPassword = loginPassword;
+    }
+
+    public String getPassword1() {
+        return password1;
+    }
+
+    public void setPassword1(String password1) {
+        this.password1 = password1;
+    }
+
+    public String getPassword2() {
+        return password2;
+    }
+
+    public void setPassword2(String password2) {
+        this.password2 = password2;
+    }
+
+    public String getEmailExists() {
+        return emailExists;
+    }
+
+    public void setEmailExists(String emailExists) {
+        this.emailExists = emailExists;
+    }
+
+    public String getPasswordMatch() {
+        return passwordMatch;
+    }
+
+    public void setPasswordMatch(String passwordMatch) {
+        this.passwordMatch = passwordMatch;
+    }
+
+    /**
+     * @return the result of the login method
+     */
+    public String makeLogin() {
+
+        UserPlay result = userPlayFacade.login(loginEmail, loginPassword);
+
+        if (result == null) {
+            userExists = userPlayFacade.getUserExists();
+            passwordCorrect = userPlayFacade.getPasswordCorrect();
+            return "login";
+        }
+        activeObjectsEJB.setUser(result);
+        return "mainWindow";
+    }
+
+    /**
+     * @return The result of the logout method
+     */
+    public String makeLogout() {
+        return userPlayFacade.logout();
+    }
+
+    public void verifyUser() {
+        userPlayFacade.isLogged(activeObjectsEJB.getUser());
+    }
+
+    /**
+     * Calls the newUser method and sets the logedUser
+     *
+     * @return The String that leads to a XHTML window
+     */
+    public String makeNewUser() {
+
+        UserPlay newUser = userPlayFacade.newUser(user, password2);
+
+        if (newUser != null) {
+            activeObjectsEJB.setUser(newUser);
+            return "mainWindow";
+        } else {
+            passwordMatch = userPlayFacade.getPassMissmatch();
+            emailExists = userPlayFacade.getEmailUnavailable();
+            return "newUser";
+        }
+    }
+
+    /**
+     * Calls the updateUser method and sets the logedUser
+     *
+     * @return The String that leads to a XHTML window
+     */
+    public String makeUpdateUser() {
+
+        UserPlay updatedUser = userPlayFacade.updateUser(activeObjectsEJB.getUser(),
+                user, password1, password2);
+
+        if (updatedUser != null) {
+            activeObjectsEJB.setUser(updatedUser);
+            return "mainWindow";
+        } else {
+            passwordMatch = userPlayFacade.getPassMissmatch();
+            emailExists = userPlayFacade.getEmailExists();
+            return "profile";
+
+        }
+
+    }
+
+    /**
+     * Deletes the user and invalidate the session
+     *
+     * @return The String that leads to a XHTML window
+     */
+    public String makeDeleteUser() {
+        userPlayFacade.removeUser(activeObjectsEJB.getUser());
+
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+        session.invalidate();
+
+        return "login";
+
+    }
+
+}

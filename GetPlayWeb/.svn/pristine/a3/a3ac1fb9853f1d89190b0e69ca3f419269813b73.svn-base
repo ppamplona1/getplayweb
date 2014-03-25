@@ -1,0 +1,144 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package pt.uc.dei.aor.projeto3.grupod.managedBeans;
+
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.SessionScoped;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.validator.ValidatorException;
+import javax.mail.MessagingException;
+import javax.servlet.http.Part;
+import pt.uc.dei.aor.projeto3.grupod.ejb.CreateMusicSessionBean;
+import pt.uc.dei.aor.projeto3.grupod.ejb.MusicSessionBean;
+import pt.uc.dei.aor.projeto3.grupod.entities.Music;
+import pt.uc.dei.aor.projeto3.grupod.exceptions.notMp3;
+
+/**
+ *
+ * @author brunocosta
+ */
+@ManagedBean
+@SessionScoped
+public class CreateMusicManagedBean implements Serializable {
+
+    @EJB
+    private CreateMusicSessionBean createMusicB;
+    
+    @EJB
+    private MusicSessionBean musicB;
+    
+    @ManagedProperty(value = "#{logedUserManagedBean}")
+    private LogedUserManagedBean logedUserMB;
+    
+    private Music music;
+    private Part file;
+    private String isMP3 = "";
+    
+    public CreateMusicManagedBean() {
+        this.music = new Music();
+    }
+    
+
+    public Music getMusic() {
+        return music;
+    }
+
+    public void setMusic(Music music) {
+        this.music = music;
+    }
+    
+    public LogedUserManagedBean getLogedUserMB() {
+        return logedUserMB;
+    }
+
+    public void setLogedUserMB(LogedUserManagedBean logedUserMB) {
+        this.logedUserMB = logedUserMB;
+    }
+
+    public CreateMusicSessionBean getCreateMusicB() {
+        return createMusicB;
+    }
+
+    public void setCreateMusicB(CreateMusicSessionBean createMusicB) {
+        this.createMusicB = createMusicB;
+    }
+
+    public MusicSessionBean getMusicB() {
+        return musicB;
+    }
+
+    public void setMusicB(MusicSessionBean musicB) {
+        this.musicB = musicB;
+    }
+
+    public Part getFile() {
+        return file;
+    }
+
+    public void setFile(Part file) {
+        this.file = file;
+    }
+
+    public String getIsMP3() {
+        return isMP3;
+    }
+
+    public void setIsMP3(String isMP3) {
+        this.isMP3 = isMP3;
+    }
+    
+    
+
+    public void isMP3() throws notMp3 {
+       
+        
+        if (!"audio/mpeg".equals(file.getContentType()) && !"audio/mp3".equals(file.getContentType())) {
+                throw new notMp3();
+        }
+    }
+
+    public String newMusic() throws MessagingException, IOException {
+        
+        try {
+            isMP3();
+            
+            createMusicB.upload(this.file, this.music, this.logedUserMB.getUserLoged());
+            
+            Music newMusic = createMusicB.newMusic(this.music);
+            
+            this.isMP3 = "";
+            
+            
+            if (newMusic != null) {
+                return "mainWindow";
+            } 
+            else {
+                return "newMusic";
+            }
+            
+        } catch (notMp3 ex) {
+            this.isMP3 = ex.getMessage();
+            return "newMusic";
+        }
+        
+        
+        
+        
+
+    }
+
+}

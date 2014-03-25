@@ -1,0 +1,74 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package managedBeans;
+
+import beans.UserFacade;
+import entities.UserPlay;
+import javax.ejb.EJB;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+
+/**
+ *
+ * @author brunocosta
+ */
+@ManagedBean
+@RequestScoped
+public class LoginManagedBean {
+    @EJB
+    private UserFacade userFacade;
+    
+    
+    
+    private String loginEmail;
+    private String loginPassword;
+    
+    private UserPlay logedUser;
+    
+    public LoginManagedBean() {
+    }
+
+    public String getLoginEmail() {
+        return loginEmail;
+    }
+
+    public void setLoginEmail(String loginEmail) {
+        this.loginEmail = loginEmail;
+    }
+
+    public String getLoginPassword() {
+        return loginPassword;
+    }
+
+    public void setLoginPassword(String loginPassword) {
+        this.loginPassword = loginPassword;
+    }
+    
+    public String login(){
+        
+        if(userFacade.findUserByMail(loginEmail)!= null && 
+                userFacade.findUserByMail(loginEmail).getPassword().equals(loginPassword)){
+            
+            logedUser = userFacade.findUserByMail(loginEmail);
+            return "mainWindow";
+        }
+        else{
+            return "login";
+        }
+    }
+
+    public UserPlay getLogedUser() {
+        return logedUser;
+    }
+
+    public void setLogedUser(UserPlay logedUser) {
+        this.logedUser = logedUser;
+    }
+    
+    
+            
+}

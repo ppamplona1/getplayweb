@@ -1,0 +1,105 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package pt.uc.dei.aor.projeto3.grupod.facades;
+
+import java.util.List;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import pt.uc.dei.aor.projeto3.grupod.entities.Music;
+import pt.uc.dei.aor.projeto3.grupod.entities.Playlist;
+import pt.uc.dei.aor.projeto3.grupod.entities.UserPlay;
+import pt.uc.dei.aor.projeto3.grupod.exceptions.MusicInPlaylistException;
+import pt.uc.dei.aor.projeto3.grupod.exceptions.PlaylistNameException;
+
+/**
+ *
+ * @author brunocosta
+ */
+@Stateless
+public class PlaylistFacade extends AbstractFacade<Playlist> {
+
+    @PersistenceContext(unitName = "GetPlayWebPU")
+    private EntityManager em;
+
+    @Override
+    protected EntityManager getEntityManager() {
+        return em;
+    }
+
+    public PlaylistFacade() {
+        super(Playlist.class);
+    }
+
+    private UserPlay u;
+
+    public UserPlay getU() {
+        return u;
+    }
+
+    public void setU(UserPlay u) {
+        this.u = u;
+    }
+
+    public List<Playlist> findAllPlaylistsByUserID() {
+        Query q = em.createNamedQuery("Playlist.findByUserId");
+        q.setParameter("userID", u.getUserID());
+        List<Playlist> playlists = q.getResultList();
+        return playlists;
+
+    }
+
+    public Playlist searchPlaylist(Playlist p) throws PlaylistNameException {
+        Query q = em.createNamedQuery("Playlist.findByPlaylistName");
+        q.setParameter("name", p.getName());
+     
+        List<Playlist> pl = q.getResultList();
+        if(pl==null){
+            return null;
+        }
+        else{
+            UserPlay u = p.getUser();
+            for(Playlist play : pl){
+                UserPlay u2 = play.getUser();
+                if(play.getName().equals(p.getName())&&u2.getUserID()==u.getUserID()){
+                    throw new PlaylistNameException();
+                }
+            }
+
+            return null;
+      
+        }
+
+    }
+
+    public String createPlaylist(Playlist p) throws PlaylistNameException {
+        
+        if (!p.getName().isEmpty()) {
+            Playlist pl = this.searchPlaylist(p);
+            if(pl==null){
+                 super.create(p);
+                 return "myPlaylists";
+            }
+            throw new PlaylistNameException();
+        } else {
+
+            throw new PlaylistNameException();
+
+        }
+    }
+
+    public String editPlaylist(Playlist p, Music m) throws MusicInPlaylistException {
+        if (!p.getSongs().contains(m)) {
+            p.getSongs().add(m);
+            edit(p);
+            return "myPlaylists";
+        } else {
+            throw new MusicInPlaylistException();
+
+        }
+    }
+}

@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <ui:insert name="metadata"/>
+        <f:event type="preRenderView" listener="#{userManagedBean.verifyUser()}" />
+    </h:head>
+    <h:body>
+        
+
+            <ui:composition template="./mainTemplate.xhtml">
+
+                <ui:define name ="content">
+                    
+                    <h:form>
+                    
+                    <h1>Edit Playlist</h1>
+                    <br />
+
+                    <table border="0" cellspacing="10">
+                        <thead>
+
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <h:outputLabel value="Name"/>
+                                </td>
+                                <td>
+                                    <h:inputText id="name" value ="#{editPlaylistManagedBean.playlist.name}"/>
+                                </td>
+                                <td>
+                                    <h:outputLabel value="#{editPlaylistManagedBean.errorMessage}" style="color: red"/>
+                                    <h:message for="name" style="color: red"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h:commandButton value="Cancel" action="myPlaylists"/>
+                                </td>
+                                <td>
+                                    <h:commandButton value="Edit" action="#{editPlaylistManagedBean.edit}"/>
+                                </td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </h:form>
+
+                </ui:define>
+            </ui:composition>
+        
+    </h:body>
+</html>
+

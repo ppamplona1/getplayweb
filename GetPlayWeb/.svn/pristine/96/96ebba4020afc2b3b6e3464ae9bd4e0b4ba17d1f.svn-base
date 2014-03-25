@@ -1,0 +1,104 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package pt.uc.dei.aor.projeto3.grupod.ejb;
+
+import java.util.List;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import pt.uc.dei.aor.projeto3.grupod.entities.Music;
+import pt.uc.dei.aor.projeto3.grupod.entities.Playlist;
+import pt.uc.dei.aor.projeto3.grupod.exceptions.PlaylistNameException;
+import pt.uc.dei.aor.projeto3.grupod.facades.PlaylistFacade;
+
+/**
+ *
+ * @author brunocosta
+ */
+@Stateless
+public class PlaylistEJB {
+    
+    
+    @EJB
+    private PlaylistFacade playlistFacade;
+    
+    @Inject
+    private LogedUserEJB userLogedEJB;
+
+    private String messageError;
+    private List<Playlist> listMyPlaylists;
+    private Playlist playlist;
+
+    public PlaylistFacade getPlaylistFacade() {
+        return playlistFacade;
+    }
+
+    public void setPlaylistFacade(PlaylistFacade playlistFacade) {
+        this.playlistFacade = playlistFacade;
+    }
+
+    public Playlist getPlaylist() {
+        return playlist;
+    }
+
+    public void setPlaylist(Playlist playlist) {
+        this.playlist = playlist;
+    }
+
+    public List<Playlist> getListMyPlaylists() {
+        listMyPlaylists=listPlaylist();
+        return listMyPlaylists;
+    }
+
+    public void setListMyPlaylists(List<Playlist> listMyPlaylists) {
+        this.listMyPlaylists = listMyPlaylists;
+    }
+
+    public LogedUserEJB getUserLogedEJB() {
+        return userLogedEJB;
+    }
+
+    public void setUserLogedEJB(LogedUserEJB userLogedEJB) {
+        this.userLogedEJB = userLogedEJB;
+    }
+
+    public String getMessageError() {
+        return messageError;
+    }
+
+    public void setMessageError(String messageError) {
+        this.messageError = messageError;
+    }
+    
+    
+    
+    public String newPlaylist(Playlist p) {
+        
+        try {
+            playlistFacade.createPlaylist(p);
+            return "myPlaylists";
+        } catch (PlaylistNameException ex) {
+            messageError=ex.getMessage();
+            return "newPlaylist";
+        }
+
+    }
+    
+    
+    public List<Playlist> listPlaylist(){
+        playlistFacade.setU(userLogedEJB.getUser());
+        List<Playlist> resultsSongs = playlistFacade.findAllPlaylistsByUserID();
+        
+        return resultsSongs;
+    }
+    
+    public List<Music> seePlaylist(Playlist p){
+        return p.getSongs();
+         
+    }
+    
+}

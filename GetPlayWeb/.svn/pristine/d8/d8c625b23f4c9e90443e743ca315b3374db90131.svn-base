@@ -1,0 +1,105 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package pt.uc.dei.aor.projeto3.grupod.ejb;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.ejb.Stateless;
+import pt.uc.dei.aor.projeto3.grupod.entities.Music;
+import pt.uc.dei.aor.projeto3.grupod.entities.Playlist;
+import pt.uc.dei.aor.projeto3.grupod.entities.UserPlay;
+import pt.uc.dei.aor.projeto3.grupod.exceptions.MusicInPlaylistException;
+import pt.uc.dei.aor.projeto3.grupod.facades.PlaylistFacade;
+
+/**
+ *
+ * @author User
+ */
+@Stateless
+public class MusicPlaylistSessionBean {
+
+    // Add business logic below. (Right-click in editor and choose
+    // "Insert Code > Add Business Method")
+    @EJB
+    private PlaylistFacade pf;
+
+    private List<Playlist> list;
+
+    private UserPlay u;
+    
+    private String error;
+    
+
+    @PostConstruct
+    public void init() {
+        list = new ArrayList();
+    }
+
+    public PlaylistFacade getPf() {
+        return pf;
+    }
+
+    public void setPf(PlaylistFacade pf) {
+        this.pf = pf;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+    
+    
+
+    public List<Playlist> getList() {
+        pf.setU(u);
+        list = pf.findAllPlaylistsByUserID();
+        return list;
+    }
+
+    public void setList(List<Playlist> list) {
+        this.list = list;
+    }
+
+    public UserPlay getU() {
+        return u;
+    }
+
+    public void setU(UserPlay u) {
+        this.u = u;
+    }
+
+    public String copyToplaylistAllMusics(Music m, String nome) {
+
+  
+        Playlist p = null;
+        for (int i = 0; i < this.list.size(); i++) {
+            p = this.list.get(i);
+            if (p.getName().equals(nome)&&p.getUser().getUserID()==u.getUserID()) {
+                try {
+                    pf.editPlaylist(p, m);
+                   
+                    return "myPlaylists";
+                } catch (MusicInPlaylistException ex) {
+                    Logger.getLogger(MusicPlaylistSessionBean.class.getName()).log(Level.SEVERE, null, ex);
+                 
+                    this.error=ex.getMessage();
+                    return "allMusics";
+                }
+            }
+        }
+
+        
+        return "allMusics";
+    }
+
+}

@@ -1,0 +1,134 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package pt.uc.dei.aor.projeto3.grupod.managedBeans;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.SessionScoped;
+import javax.faces.model.DataModel;
+import pt.uc.dei.aor.projeto3.grupod.ejb.CreatePlaylist;
+import pt.uc.dei.aor.projeto3.grupod.ejb.PlaylistSessionBean;
+import pt.uc.dei.aor.projeto3.grupod.entities.Playlist;
+
+/**
+ *
+ * @author brunocosta
+ */
+@ManagedBean
+@SessionScoped
+public class PlaylistManagedBean implements Serializable{
+    
+    @EJB
+    private CreatePlaylist cp;
+    
+    @ManagedProperty(value = "#{logedUserManagedBean}")
+    private LogedUserManagedBean logedUserMB;
+    
+    private Playlist pl;
+    
+    private DataModel<Playlist> resultsMyPlaylists; 
+    
+    private String messageError;
+    
+    @EJB
+    private PlaylistSessionBean psb;
+    
+    private List<Playlist> listPlay;
+    /**
+     * Creates a new instance of PlaylistManagedBean
+     */
+    public PlaylistManagedBean() {
+        
+    }
+    
+
+    public CreatePlaylist getCp() {
+        return cp;
+    }
+
+    public void setCp(CreatePlaylist cp) {
+        this.cp = cp;
+    }
+
+    public Playlist getPl() {
+        if(pl==null){
+            pl=new Playlist();
+        }
+        return pl;
+    }
+
+    public void setPl(Playlist pl) {
+        this.pl = pl;
+    }
+
+    public LogedUserManagedBean getLogedUserMB() {
+        return logedUserMB;
+    }
+
+    public void setLogedUserMB(LogedUserManagedBean logedUserMB) {
+        this.logedUserMB = logedUserMB;
+    }
+
+    public String newPlaylist(){
+        GregorianCalendar gc = new GregorianCalendar();
+        pl.setCreationDate(gc.getTime());
+        pl.setUser(this.logedUserMB.getUserLoged());
+        return this.cp.newPlaylist(pl);
+    }
+
+    public DataModel<Playlist> getResultsMyPlaylists() {
+        this.psb.setUserLogged(this.logedUserMB.getUserLoged());
+        resultsMyPlaylists=this.psb.myPlaylistsList();
+        return resultsMyPlaylists;
+    }
+
+    public void setResultsMyPlaylists(DataModel<Playlist> resultsMyPlaylists) {
+        this.resultsMyPlaylists = resultsMyPlaylists;
+    }
+
+    public PlaylistSessionBean getPsb() {
+        return psb;
+    }
+
+    public void setPsb(PlaylistSessionBean psb) {
+        this.psb = psb;
+    }
+
+    public List<Playlist> getListPlay() {
+        listPlay=new ArrayList();
+        listPlay=this.psb.getListMyPlaylists();
+        return listPlay;
+    }
+
+    public void setListPlay(List<Playlist> listPlay) {
+        this.listPlay = listPlay;
+    }
+
+    public String getMessageError() {
+        messageError=cp.getMessageError();
+        cp.setMessageError("");
+        return messageError;
+    }
+
+    public void setMessageError(String messageError) {
+        this.messageError = messageError;
+    }
+    
+    public String cancelCreatePlaylist(){
+        cp.setMessageError("");
+        messageError="";
+        return "mainWindow";
+    }
+    
+    
+}
